@@ -1,0 +1,1176 @@
+\section{Polimorfismo de Sobrecarga em Haskell}\label{polhaskell}
+
+Esta se\c{c}\~ao descreve o polimorfismo de sobrecarga em Haskell, que \'e baseado em classes de tipos.
+
+\subsection{Classes de tipo}
+
+Classes de tipo em Haskell \cite{Haskell98, Haskell07} permitem ao programador definir s\'imbolos 
+sobrecarregados e seus respectivos tipos, que podem ser instanciados ent\~ao para diferentes tipos, definidos como 
+inst\^ancias de classes.
+ 
+Uma declara\c{c}\~ao de inst\^ancia de uma determinada classe 
+fornece a defini\c{c}\~ao para os s\'imbolos desta classe, para tipos espec\'ificos para cada par\^ametro da classe.
+Como um primeiro exemplo (baseado em um exemplo de \cite{Haskell07}), considere a classe 
+\texttt{Eq}, que possui um \'unico par\^ametro, e duas inst\^ancias definidas para \texttt{Int} e 
+\texttt{Bool}, apresentadas na figura \ref{fig6}.
+
+\begin{figure}[h]
+      \verb|class Eq a where|\\
+      \verb|   (==), (/=) :: a| $\rightarrow$ \verb| a | $\rightarrow$ \verb|Bool|\\
+      \verb|   x == y = not (x /= y)|\\
+      \verb|   x /= y = not (x == y)|\\\\
+      \verb|instance Eq Int where|\\
+      \verb|   x == y = primEqInt x y|\\\\
+      \verb|instance Eq Bool where|\\
+      \verb|   True == True = True|\\
+      \verb|   False == False = True|\\
+      \verb|   _ == _ = False|\\\\   
+      \verb|instance Eq a| $\Rightarrow$ \verb|Eq [a] where|\\
+      \verb|   [] == [] = True|\\
+      \verb|   (x:xs) == (y:ys) = (x == y) && (xs == ys)|\\
+      \verb|   xs /= ys = not (xs == ys)|        
+  \caption{Exemplo de classe de tipos e inst\^ancias}
+  \label{fig6}
+\end{figure} 
+
+Suponha que \texttt{primEqInt} seja uma fun\c{c}\~ao primitiva, de tipo \texttt{Int} 
+$\rightarrow$ \texttt{Int} $\rightarrow$ \texttt{Bool}, que verifique a igualdade de dois 
+n\'umeros inteiros. Considerando as duas inst\^ancias definidas para a classe \texttt{Eq}, 
+tem-se que as seguintes express\~oes \texttt{2 == 3} e \texttt{False /= False} s\~ao bem 
+tipadas. De maneira similar, a seguinte declara\c{c}\~ao polim\'orfica tamb\'em \'e bem tipada:
+\begin{figure}[h]
+  \begin{flushleft}
+     \texttt{member x [] = False}\\
+     \texttt{member x (y:ys) = (x == y) || (member x ys)}
+  \end{flushleft}
+  \caption{Fun\c{c}\~ao polim\'orfica cujo tipo \'e restringido pela classe \texttt{Eq}.}
+  \label{fig7}
+\end{figure}
+
+A fun\c{c}\~ao \texttt{member}, definida na Figura \ref{fig7}, tem um tipo que pode ser denotado 
+por \texttt{$\text{member}\,\text{::}\, \text{Eq}\,\, $\texttt{a} $\Rightarrow$ a $\rightarrow$ [a] $\rightarrow$ Bool}, 
+sendo que \texttt{Eq a} \'e uma restri\c{c}\~ao sobre o tipo polim\'orfico 
+\texttt{a $\rightarrow$ [a] $\rightarrow$ Bool}, que limita os tipos para os 
+quais a vari\'avel \texttt{a} pode ser instanciada aos tipos pertencentes \`a classe \texttt{Eq}.
+
+Classes de tipos podem ser declaradas de maneira a formar hierarquias. Por exemplo:
+
+\begin{figure}[h]
+      \verb|class Eq a where|\\
+      \verb|   (==), (/=) :: a | $\rightarrow$ \verb| a | $\rightarrow$ \verb|Bool|\\
+      \verb|class Eq a |$\Rightarrow$ \verb| Ord a where|\\
+      \verb|   (>), (<) :: a | $\rightarrow$ \verb| a | $\rightarrow$ \verb|Bool|\\
+   \caption{Exemplo de hierarquia de classes de tipos.}
+   \label{fig10}
+\end{figure}
+
+Na Figura \ref{fig10}, a classe \texttt{Ord} \'e definida como \emph{subclasse} de \texttt{Eq}. 
+Assim sendo, um tipo somente pertencer\'a a classe \texttt{Ord} se este j\'a pertencer a classe 
+\texttt{Eq}. A forma\c{c}\~ao de hierarquia de classes pode simplificar os tipos de express\~oes 
+envolvendo s\'imbolos sobrecarregados, como no seguinte exemplo:
+\begin{verbatim}
+search y [] = False
+search y (x:xs) = if x == y then True
+                  else if x < y then False else search y xs
+\end{verbatim} 
+
+O tipo inferido para esta fun\c{c}\~ao \'e: \texttt{search :: Ord a $\Rightarrow$ a $\rightarrow$ [a] $\rightarrow$ Bool}. Caso a classe \texttt{Ord} n\~ao fosse definida como subclasse de \texttt{Eq} ter\'iamos:
+\begin{center} 
+\texttt{search :: (Ord a, Eq a) $\Rightarrow$ a $\rightarrow$ [a] $\rightarrow$ Bool}.
+\end{center}
+
+Uma interessante caracter\'istica de fun\c{c}\~oes sobrecarregadas definidas por classes de tipo \'e 
+que estas podem ser traduzidas em fun\c{c}\~oes n\~ao sobrecarregadas equivalentes recebendo um 
+argumento extra, denominado dicion\'ario \cite{Wadler89}, que armazena, para cada
+tipo que \'e inst\^ancia de uma classe, fun\c{c}\~oes que definem, para este tipo, os s\'imbolos da 
+classe. O trecho de c\'odigo na Figura \ref{fig8} apresenta o resultado da tradu\c{c}\~ao do c\'odigo 
+apresentado na Figura \ref{fig6} para o equivalente utilizando dicion\'arios.
+
+\begin{figure}[h]
+     \verb|data Eq a = MkEq (a |$\rightarrow$ \verb| a | $\rightarrow$ \verb|Bool) (a|
+     $\rightarrow$ \verb| a | $\rightarrow$ \verb|Bool)|\\\\
+     \verb|eq (MkEq e _) = e|\\
+     \verb|ne (MkEq _ n) = n|\\\\
+     \verb|dEqInt :: Eq Int|\\
+   \verb|dEqInt = MkEq primEqInt (|$\lambda$\verb|x y| 
+   $\rightarrow$ \verb|not(primEqInt x y))|\\\\
+     \verb|dEqBool :: Eq Bool|\\
+     \verb|dEqBool = MkEq f (|$\lambda$\verb|x y|$\rightarrow$ \verb|not(f x y))|\\
+     \verb|          where f True True = True|\\
+     \verb|                f False False = True|\\
+     \verb|                f _ _ = False|\\\\
+     \verb|dEqList :: Eq a | $\rightarrow$ \verb| Eq[a]|\\
+     \verb|dEqList d = MkEq el (|$\lambda$\verb|x y|$\rightarrow$ \verb|not(el x y))|\\ \verb|            where el [] [] = True|\\
+     \verb|                  el (x:xs) (y:ys) = (eq d x y) && (el xs ys)|\\
+     \verb|                  el _ _ = False|
+  \caption{Exemplo de tradu\c{c}\~ao de classes de tipo e inst\^ancias para dicion\'arios.}
+  \label{fig8}
+\end{figure}
+
+Pode-se observar, na tradu\c{c}\~ao mostrada na Figura \ref{fig8}, que a declara\c{c}\~ao de classe foi 
+convertida para uma defini\c{c}\~ao de um novo tipo de dados, que representa o dicion\'ario para a 
+classe \texttt{Eq}. Este tipo de dados possui um \'unico construtor de valores deste tipo, \texttt{MkEq}, 
+que possui como par\^ametros dois valores do tipo funcional \texttt{a $\rightarrow$ a $\rightarrow$ Bool}, 
+que correspondem \`as fun\c{c}\~oes membro \texttt{(==) e (/=)}. 
+
+Cada uma das inst\^ancias, definidas na Figura \ref{fig8}, foi traduzida para uma fun\c{c}\~ao que 
+pode receber dicion\'arios como argumentos (correspondentes a super-classes) e retorna dicion\'arios. 
+A inst\^ancia que implementa a igualdade para listas, ap\'os a tradu\c{c}\~ao, recebe como par\^ametro adicional 
+um dicion\'ario para representar as opera\c{c}\~oes da classe \texttt{Eq} de seus elementos.
+
+A tradu\c{c}\~ao da fun\c{c}\~ao \texttt{member} (Figura \ref{fig9}), definida originalmente na Figura \ref{fig7}, possui um par\^ametro extra correspondente ao dicion\'ario da classe \texttt{Eq}, que representa a restri\c{c}\~ao \texttt{Eq a} presente em seu tipo original. Al\'em disto, a utiliza\c{c}\~ao do s\'imbolo sobrecarregado \texttt{(==)} \'e substitu\'ida pela fun\c{c}\~ao de proje\c{c}\~ao \texttt{eq}, conforme pode ser observado:
+\begin{figure}[h]
+   \begin{flushleft}
+       \texttt{member :: Eq a $\rightarrow$ a $\rightarrow$ [a] $\rightarrow$ Bool}\\
+       \texttt{member \_ x [] = False}\\
+       \texttt{member d x (y:ys) = (eq d x y) || member d x ys}
+   \end{flushleft}
+   \caption{Tradu\c{c}\~ao da fun\c{c}\~ao \texttt{member}, utilizando dicion\'arios.}
+   \label{fig9}
+\end{figure}
+
+Outra peculiaridade permitida na linguagem Haskell para a defini\c{c}\~ao de classes de tipo 
+\'e a possibilidade de adicionar implementa\c{c}\~oes \emph{padr\~ao} (\emph{default}) para as 
+fun\c{c}\~oes membro de uma classe. Na defini\c{c}\~ao da classe \texttt{Eq} (Figura \ref{fig6}), 
+temos defini\c{c}\~oes padr\~ao para os s\'imbolos \texttt{(==)} e \texttt{(/=)} como sendo:
+
+\begin{verbatim}
+x == y = not (x /= y)
+x /= y = not (x == y)
+\end{verbatim}
+
+Com isto, o programador passa a ter que definir, em inst\^ancias da classe \texttt{Eq}, 
+apenas um dos s\'imbolos \texttt{(==)} ou \texttt{(/=)}, uma vez que a implementa\c{c}\~ao 
+padr\~ao ser\'a utilizada para o s\'imbolo omitido.
+
+\subsection{Ambig\"uidade}\label{amb}
+
+Um problema da abordagem atualmente utilizada por Haskell para o polimorfismo de sobrecarga dependente 
+de contexto \'e a possibilidade de ocorr\^encia de \emph{ambiguidades}. Considere o seguinte exemplo cl\'assico 
+\cite{Haskell98,Haskell07}:
+\begin{flushleft}
+   \verb|show :: Show a |$\Rightarrow$\verb| a |$\rightarrow$\verb| String|\\
+   \verb|read :: Read a |$\Rightarrow$\verb|String| $\rightarrow$ \verb|a|\\
+   \verb| |\\
+   \verb|f :: String| $\rightarrow$ \verb|String|\\
+   \verb|f s = show (read s)|
+\end{flushleft}
+
+Neste exemplo, \texttt{show} converte um valor de qualquer tipo definido como inst\^ancia da classe 
+\texttt{Show} para uma \texttt{String}, enquanto \texttt{read} faz o inverso para qualquer 
+tipo que \'e inst\^ancia da classe \texttt{Read}. Considere o tipo da express\~ao intermedi\'aria 
+\texttt{(read s)} e suponha existam inst\^ancias das classes \texttt{Read} e \texttt{Show} para os tipos \texttt{Int} 
+e \texttt{Bool}, no contexto onde ocorre a defini\c{c}\~ao de \texttt{f}. N\~ao h\'a, no contexto desta defini\c{c}\~ao,
+nenhuma condi\c{c}\~ao que requeira a instancia\c{c}\~ao destas fun\c{c}\~oes para uma de suas inst\^ancias, ou seja,
+a instancia\c{c}\~ao da vari\'avel quantificada \texttt{a} para um dos tipos \texttt{Int} ou \texttt{Bool}. O que faz 
+com que o tipo inferido para \texttt{f} seja: 
+\begin{center}
+	\texttt{f :: (Read a, Show a) $\Rightarrow$ String $\rightarrow$ String}
+\end{center}
+Tais express\~oes de tipo s\~ao ditas amb\'iguas em Haskell e s\~ao rejeitadas, por conterem um erro. 
+A linguagem Haskell possui a seguinte forma geral de tipos: $\forall\overline{\alpha} .\,\,\kappa\Rightarrow \tau$,
+onde $\overline{\alpha}$ \'e um conjunto de vari\'aveis de tipo e $\kappa$ s\~ao as restri\c{c}\~oes destas 
+vari\'aveis em rela\c{c}\~ao ao tipo $\tau$. A especifica\c{c}\~ao da linguagem define que um tipo 
+$\forall\overline{\alpha} .\,\,\kappa\Rightarrow \tau$ de  
+uma express\~ao \'e amb\'iguo se existe alguma vari\'avel de tipo presente nas restri\c{c}\~oes
+($\kappa$) que n\~ao est\'a presente no tipo ($\tau$). Diz-se que tal ocorr\^encia desta vari\'avel, neste 
+tipo, \'e amb\'igua. Como o tipo inferido para \texttt{show(read s)} \'e 
+\texttt{(Read a, Show a).String}, este \'e considerado amb\'iguo e \'e rejeitado 
+pelo compilador.
+
+Uma maneira para contornar esta situa\c{c}\~ao \'e utilizar \emph{express\~oes com anota\c{c}\~oes de tipo}. Por exemplo:
+
+\begin{flushleft}
+   \texttt{f :: String $\rightarrow$ String}\\
+   \texttt{f s = show ((read s):: Int)}
+\end{flushleft}
+
+Com a anota\c{c}\~ao de tipo presente na subexpress\~ao \texttt{(read s)::Int}, a 
+defini\c{c}\~ao do s\'imbolo \texttt{f} torna-se n\~ao amb\'igua em um contexto onde existam inst\^ancias para o tipo
+\texttt{Int} das classes \texttt{Read} e \texttt{Show}.
+
+Ambiguidades em opera\c{c}\~oes da classe \texttt{Num}\footnote{A classe \texttt{Num} que define o tipo de 
+opera\c{c}\~oes sobre tipos num\'ericos como adi\c{c}\~ao, subtra\c{c}\~ao, etc.} 
+s\~ao muito comuns. Para evitar a necessidade de tipar toda subexpress\~ao num\'erica, Haskell adota uma regra 
+bastante \emph{ad hoc}, explicada a seguir, para permitir a elimina\c{c}\~ao de algumas ambiguidades, baseada no uso 
+de cl\'ausulas \emph{default}, que t\^em a seguinte forma:
+\begin{center}
+   \texttt{default}($t_1,\ldots, t_n$)
+\end{center}
+onde $n > 0$ e cada $t_i$ deve ser um tipo da classe \texttt{Num}. Nas situa\c{c}\~oes
+onde \'e 
+detectada uma ambiguidade, uma vari\'avel de tipo \texttt{v} \'e instanci\'avel de forma a 
+eliminar a ambig\"uidade, se (retirado de \cite{Haskell98}):
+
+\begin{itemize}
+   \item{\texttt{v} aparece somente em restri\c{c}\~oes da forma \texttt{C v}, onde \texttt{C} \'e uma
+         classe, e}
+   \item{pelo menos uma destas classes \'e uma classe num\'erica, ou seja, esta \'e uma subclasse de
+         \texttt{Num} ou a pr\'opria classe \texttt{Num}.}
+\end{itemize}
+
+Ocorr\^encias amb\'iguas de vari\'aveis de tipo s\~ao instanciadas para tipos de maneira a eliminar 
+todas as ocorr\^encias amb\'iguas, se isto for poss\'ivel. Se houver mais de uma 
+possibilidade para instancia\c{c}\~ao de vari\'aveis com ocorr\^encias amb\'iguas, s\~ao escolhidos tipos 
+de acordo com a ordem em que estes ocorrem na declara\c{c}\~ao da cl\'ausula \emph{default} presente 
+no m\'odulo onde ocorreu esta ambig\"uidade.
+
+Somente uma declara\c{c}\~ao \emph{default} \'e permitida por m\'odulo e sua visibilidade \'e restrita 
+ao m\'odulo em que foi definida. Caso nenhuma declara\c{c}\~ao deste tipo seja fornecida em um 
+m\'odulo qualquer, utiliza-se a seguinte declara\c{c}\~ao padr\~ao:
+
+\begin{center}
+  \texttt{default(Integer, Double)}
+\end{center}
+
+\section{Classes de Tipos com M\'ultiplos Par\^ametros}\label{mptc}
+
+\subsection{Introdu\c{c}\~ao}
+
+A generaliza\c{c}\~ao do conceito de classes de tipo, permitindo a defini\c{c}\~ao dessas classes com 
+m\'ultiplos par\^ametros, foi originalmente proposta em \cite{Wadler89}. Considere o seguinte 
+exemplo (transcrito de \cite{Jones00}):
+
+\begin{flushleft}
+   \verb|class Coerce a b where|\\
+   \verb|   coerce :: a| $\rightarrow$ \verb|b|\\
+   \verb|instance Coerce Int Float where|\\
+   \verb|   coerce = convertIntToFloat|\\
+\end{flushleft}
+
+Diversos artigos incluem exemplos envolvendo o uso de classes de tipo com m\'ultiplos pa\-r\^a\-me\-tros 
+(por exemplo, \cite{Jones97Type, Duggan02a}). Embora v\'arias implementa\c{c}\~oes de Haskell incluam suporte a 
+classes com m\'ultiplos par\^ametros, essa extens\~ao ainda n\~ao foi inclu\'ida na defini\c{c}\~ao oficial 
+da linguagem, por causa de problemas relativos a 
+am\-bi\-gui\-da\-de. Considere por exemplo o seguinte:
+\begin{flushleft}
+   \verb|class Collects a b where|\\
+   \verb|   empty :: b|\\
+   \verb|   insert :: a |$\rightarrow$ \verb|b| $\rightarrow$ \verb|b|\\
+   \verb|   member :: a |$\rightarrow$ \verb|b| $\rightarrow$ \verb|Bool|\\
+\end{flushleft}
+
+Este exemplo foi usado em \cite{Jones00} para descrever uma classe de tipos que define os tipos de 
+opera\c{c}\~oes sobre cole\c{c}\~oes, 
+onde a vari\'avel \texttt{a} representa o tipo dos elementos e \texttt{b} o construtor da cole\c{c}\~ao. 
+Pode-se definir como inst\^ancias da classe \texttt{Collects}:
+\begin{itemize}
+    \item{Listas, \'arvores e outras estruturas de dados que possuem a forma de um construtor
+          aplicado a um tipo.}
+    \item{Estruturas que utilizam fun\c{c}\~oes de \emph{hashing}.}
+\end{itemize}
+
+Poss\'iveis inst\^ancias para esta classe seriam:
+\begin{flushleft}
+    \texttt{instance Eq a $\Rightarrow$ Collects a [a] where $\ldots$}\\
+    \texttt{instance Ord a $\Rightarrow$ Collects a (Tree a) where $\ldots$}\\
+    \texttt{instance (Hashable a, Collects a b) $\Rightarrow$ Collects a (Array Int b) where
+           $\ldots$}\\
+\end{flushleft}
+
+Neste exemplo ocorre um problema com o tipo da fun\c{c}\~ao \texttt{empty}. De acordo com a regra 
+de ambig\"uidade adotada em Haskell (apresentada na Se\c{c}\~ao \ref{amb}), essa fun\c{c}\~ao \'e considerada 
+amb\'igua, uma vez que seu tipo \'e \texttt{empty::(Collects a b) $\Rightarrow$ b}. 
+
+Uma alternativa para a resolu\c{c}\~ao deste problema \'e declarar a classe \texttt{Collects} 
+como:
+
+\begin{flushleft}
+   \verb|class Collects a c where|\\
+   \verb|   empty :: c a|\\
+   \verb|   insert :: a |$\rightarrow$\verb|c a| $\rightarrow$ \verb|c a|\\
+   \verb|   member :: a |$\rightarrow$\verb|c a| $\rightarrow$ \verb|Bool|\\
+\end{flushleft}
+
+Apesar desta declara\c{c}\~ao n\~ao apresentar problemas de ambiguidade em rela\c{c}\~ao ao s\'imbolo 
+\texttt{empty}, ela apresenta o inconveniente de poder ser instanciada apenas para 
+cole\c{c}\~oes formadas por um construtor de tipos \texttt{c} aplicado a um tipo \texttt{a}. 
+Para resolver estes problemas de ambiguidades que ocorrem devido ao uso de classes de m\'ultiplos 
+par\^ametros, diversas propostas foram elaboradas. Nas pr\'oximas se\c{c}\~oes ser\~ao apresentadas estas propostas.
+
+\subsection{Verifica\c{c}\~ao e Infer\^encia de Tipos}
+
+A defini\c{c}\~ao da linguagem Haskell permite apenas que 
+classes com um \'unico par\^ametro \cite{Duggan02a, Haskell98} sejam definidas, o que impede o uso de classes de tipos
+em diversas aplica\c{c}\~oes pr\'aticas. Mesmo diante desta restri\c{c}\~ao, \cite{Volpano94}
+mostra que o problema de satisfazibilidade de restri\c{c}\~oes para tipos polim\'orficos \'e $\mathcal{NP}$-dif\'icil
+e, sem esta restri\c{c}\~ao, torna-se indecid\'ivel.
+
+Nesta se\c{c}\~ao s\~ao apresentadas duas propostas para verifica\c{c}\~ao de tipos para programas que utilizem 
+classes de tipos com m\'ultiplos par\^ametros em Haskell sem a necessidade de extens\~oes como 
+depend\^encias funcionais (se\c{c}\~ao \ref{fundeps}) e fam\'ilias de tipos (se\c{c}\~ao \ref{typefam}). A abordagem
+proposta neste trabalho \'e descrita no cap\'itulo \ref{capmptc}.
+
+\subsubsection{A Proposta de Duggan e Ophel}
+
+
+\cite{Duggan02a} apresenta uma proposta para verifica\c{c}\~ao de tipos na qual s\~ao feitas restri\c{c}\~oes 
+que assemelham-se \`a utiliza\c{c}\~ao de depend\^encias funcionais \cite{Jones00}. Para isto os autores imp\~oe que 
+toda classe de tipos seja da forma: 
+\begin{center}
+\texttt{class $\kappa\,\Rightarrow$ C $\alpha_{1},\,...,\,\alpha_{m},\beta_{1},\,...,\,\beta_{n}$ where...}
+\end{center}
+onde as instancia\c{c}\~oes dos par\^ametros $\alpha_{1},\,...,\,\alpha_{m}$ devem unicamente determinar as 
+instancia\c{c}\~oes dos par\^ametros $\beta_{1},\,...,\,\beta_{n}$, para algum $m$ e $n$ declarados pelo programador.
+Mas, com esta restri\c{c}\~ao n\~ao \'e poss\'ivel definir, por exemplo, inst\^ancias como as seguintes:
+
+\begin{center}
+\texttt{instance (Mult $\alpha_{1}$ $\beta$ $\gamma$, Add $\gamma$ $\gamma$ $\gamma$) $\Rightarrow$ $\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,$\\
+$\,\,\,\,\,\,\,\,\,\,\,\,\,$ Mult (Matrix $\alpha_{1}$) (Matrix $\beta$) (Matrix $\gamma$) where...}\\
+\texttt{instance (Mult $\alpha_{2}$ $\beta$ $\gamma$) $\Rightarrow$ Mult $\alpha_{2}$ (Matrix $\beta$) (Matrix $\gamma$) where...}
+\end{center}
+uma vez que h\'a a possibilidade de instanciar $\alpha_{2}$ como \texttt{Matrix $\alpha_{1}$}. Para contornar este 
+problema, \cite{Duggan02a} utilizam restri\c{c}\~oes que impedem a instancia\c{c}\~ao de vari\'aveis de tipos. 
+A restri\c{c}\~ao $\alpha_{2}\neq\text{ \texttt{Matrix} }\delta$ denota que a vari\'avel $\alpha_{2}$ n\~ao pode
+ser instanciada para um tipo que possua \texttt{Matrix} como seu construtor mais externo. Usando este novo tipo de 
+restri\c{c}\~ao, temos que o trecho de c\'odigo anterior \'e representado como:
+\begin{center}
+\texttt{instance (Mult $\alpha_{2}$ $\beta$ $\gamma$, $\alpha_{2}\neq\text{ \texttt{Matrix} }\delta$) $\Rightarrow$ \\$\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,$Mult $\alpha_{2}$ (Matrix $\beta$) (Matrix $\gamma$) where...}
+\end{center} 
+  
+ Al\'em disso, os autores prop\~oem utilizar uma estrat\'egia para resolu\c{c}\~ao de sobrecarga que \'e denominada 
+ \emph{resolu\c{c}\~ao de sobrecarga baseada em unifica\c{c}\~ao}\footnote{tradu\c{c}\~ao livre: 
+ \emph{Domain-driven unifying overloading resolution}.}, definida da seguinte maneira: 
+ Dado um conjunto de restri\c{c}\~oes $\kappa$, seja $\kappa\downarrow\, = (S^{r},\kappa^{r})$ um par onde $S^{r}$ 
+ \'e uma substitui\c{c}\~ao e $\kappa^{r}$ \'e um conjunto
+de restri\c{c}\~oes que n\~ao foram resolvidas ap\'os a aplica\c{c}\~ao de $S^{r}$ a $\kappa$, 
+isto \'e: $\kappa^{r} = \{\delta\,|\,\delta\in S\kappa\land tv(\delta)\neq\emptyset\}$. A partir da configura\c{c}\~ao
+inicial $(id,\kappa)$, obtemos $\kappa\downarrow$ pela execu\c{c}\~ao dos seguintes passos:
+\begin{enumerate}
+	\item Seja $(S,\kappa)$ o estado atual do algoritmo, 
+	      $C\,\overline{\mu}\in\kappa$ uma restri\c{c}\~ao, $\kappa_{1}\Rightarrow\,C\,\overline{\mu_{1}}$ uma 
+	      inst\^ancia da classe $C$, $S^{\prime}\,=$ \emph{unify}($\overline{\mu},\overline{\mu_{1}}$) 
+	      uma substitui\c{c}\~ao que satisfa\c{c}a todas as restri\c{c}\~oes $\alpha_{i}\neq\mu_{i}\in\kappa$ e 
+	      $\kappa^{\prime}=\{\delta\,|\,\delta\in S\kappa\land tv(\delta)\neq\emptyset\}\cup\kappa_{1}$. Ent\~ao,
+	      a configura\c{c}\~ao atual do algoritmo passa a ser $(S^{\prime}\circ\,S,\,S^{\prime}\kappa^{\prime})$.
+	\item Seja $(S,\kappa)$ o estado atual do algoritmo, $\kappa_{1}\Rightarrow\,C\,\overline{\mu_{1}}$ uma inst\^ancia
+	      da classe $C$ e $C\,\overline{\mu_{1}}\,,\,C\,\overline{\mu_{2}}\in\kappa$ restri\c{c}\~oes 
+	      tais que 
+	      cada $\tau_{1i}\in\overline{\mu_{1}}$ e $\tau_{2i}\in\overline{\mu_{2}}$ e 
+	      $\tau_{1\,i}=\tau_{2\,i}$, para todo $1\leq\,i\,\leq\,n$ onde 
+	      $n \leq k = |\overline{\mu_{1}}| = |\overline{\mu_{2}}|$. Suponha que 
+	      $S^{\prime}=$\emph{unifyset}($\{$($\mu_{1j}\,,\mu_{2j}$)$\,|\,j=n+1,\hdots,k\}$), onde \emph{unifyset} \'e
+	      definido como:
+	      \begin{equation*}
+	      	unifyset(T) =\left\{
+	      					\begin{array}{ll}
+	      						id & \text{se } T = \emptyset.\\
+	      						S^{\prime}\, \circ\, S & \text{se } T = (\mu_{1},\mu_{2})\,\oplus\, T^{\prime} \\
+	      					\end{array}
+	      	             \right. 
+	         \begin{array}{ll}
+	      		  \text{onde: } & S^{\prime} = unifyset(S\,T^{\prime})\\
+	      		                & S = unify(\mu_{1},\mu_{2})
+	      	 \end{array}
+	      \end{equation*}
+	      \emph{unify} \'e uma fun\c{c}\~ao que calcula o 
+	      unificador mais geral de $\mu_{1},\mu_{2}$ e $\oplus$ denota a uni\~ao disjunta de dois conjuntos.
+	      Nestas condi\c{c}\~oes, o algoritmo passa a ter como estado atual 
+	      $(S^{\prime}\circ\,S,\,S^{\prime}\kappa^{\prime})$ onde $\kappa^{\prime}=\kappa - \{C\,\overline{\mu_{1}}\}$.
+	\item O algoritmo falha caso n\~ao exista uma inst\^ancia 
+	      que unifique com alguma restri\c{c}\~ao $C\,\overline{\mu}\in\kappa$.	      
+\end{enumerate}
+
+Para uma melhor compreens\~ao deste algoritmo, consideraremos dois exemplos que exibir\~ao como cada uma das regras 
+funciona. Para a primeira regra, considere o seguinte exemplo:
+
+\begin{verbatim}
+   data Employee = E String String Int 
+   
+   class Name a b where name :: a -> b
+   
+   instance Name Employee String where
+       name (E n _ _) = n
+   
+   f = name (E "J" "a" 2) == name (E "a" "c" 1) 
+\end{verbatim}
+
+No trecho de c\'odigo anterior, as restri\c{c}\~oes para \texttt{f} s\~ao:
+\begin{center}
+   \texttt{Eq a, Name Employee a}
+\end{center}
+
+Supondo que todas as defini\c{c}\~oes do prel\'udio de Haskell\footnote{Prel\'udio (Prelude) \'e o nome de um 
+m\'odulo que \'e importado automaticamente por todo m\'odulo em programas Haskell.} estejam vis\'iveis no ponto da
+defini\c{c}\~ao de \texttt{f}, temos que existem v\'arias inst\^ancias que satisfazem \`a restri\c{c}\~ao \texttt{Eq a},
+por\'em somente a inst\^ancia \texttt{Name Employee String} satisfaz \`a restri\c{c}\~ao \texttt{Name Employee a}. Ao 
+unificarmos esta restri\c{c}\~ao com a inst\^ancia \texttt{Name Employee String} obtemos a seguinte 
+substitui\c{c}\~ao:
+\begin{center}
+ \texttt{$S=\{$a $\mapsto$ String$\}$} 
+\end{center}
+que especializa o tipo de \texttt{f} para \texttt{Bool}, uma vez que no contexto da defini\c{c}\~ao de \texttt{f} 
+existem inst\^ancias para \texttt{Eq String} e \texttt{Name Employee String}.
+
+Para a segunda regra, considere o seguinte exemplo:
+
+\begin{verbatim}
+    class Add a b c where (+) :: a -> b -> c
+	
+    f x y = (x + y, x + y) 
+\end{verbatim}
+
+Neste trecho de c\'odigo, temos que as seguintes restri\c{c}\~oes geradas para o tipo de \texttt{f} s\~ao:
+\begin{center}
+   $\kappa=\{$\texttt{Add a b c, Add a b d}$\}$
+\end{center}
+Pela regra 2, temos que $C\,\overline{\mu_{1}}=$ \texttt{Add a b c}, $C\,\overline{\mu_{2}}=$ \texttt{Add a b d}, onde 
+$\overline{\mu_{1}}=\{$\texttt{a,b,c}$\}$, $\overline{\mu_{2}}=\{$\texttt{a,b,d}$\}$, $n=2$ e $k=3$. Portanto, pela
+mesma regra, temos que a substitui\c{c}\~ao $S^{\prime}$ ser\'a:
+\begin{center} 
+$S^{\prime}=\{$d $\mapsto$ c$\}=unifyset$($\{$(\texttt{c},\texttt{d})$\}$)
+\end{center}
+o que faz com que a configura\c{c}\~ao do algoritmo passe a ser igual a 
+\begin{center}
+$(S^{\prime},S^{\prime}\,\{$\texttt{Add a b d}$\}) = (S^{\prime},\,\{$\texttt{Add a b c}$\})$
+\end{center}
+com isso, temos que o tipo inferido para \texttt{f} \'e: 
+\begin{center}
+	\texttt{f :: Add a b c $\Rightarrow$ a -> b -> c}
+\end{center}
+
+O algoritmo de infer\^encia e o sistema de tipos proposto por \cite{Duggan02a} utiliza a resolu\c{c}\~ao de sobrecarga
+baseada em unifica\c{c}\~ao para prover suporte a classes de tipos com m\'ultiplos par\^ametros em Haskell. Um problema
+desta abordagem \'e que ela n\~ao imp\~oe restri\c{c}\~oes que garantam a termina\c{c}\~ao do algoritmo de infer\^encia 
+de tipos. Os autores provam que para programas bem tipados, o algoritmo de infer\^encia sempre termina, mas este pode 
+n\~ao terminar para programas com erros de tipos. O programa da figura \ref{dugganloop} \'e um exemplo que causa a 
+n\~ao termina\c{c}\~ao do algoritmo de infer\^encia.
+
+\begin{figure}[h]
+	\begin{flushleft}
+\verb|	   class Foo a b where| \\
+\verb|	       foo :: a -> b -> Int|\\ 
+\verb| |\\	       
+\verb|	   instance Foo Int Float where foo x y = 0|\\
+\verb|	   instance Foo a b| $\Rightarrow$ \verb|Foo [a] [b] where foo (x:_) (y:_) = foo x y|\\
+\verb| |\\	   
+\verb|	   g x y = (foo [x] y) + (foo [y] x)|
+	\end{flushleft}
+	\caption{Trecho de C\'odigo que faz o algoritmo de infer\^encia de \cite{Duggan02a} n\~ao terminar}
+	\label{dugganloop}	
+\end{figure}
+Neste trecho de programa, temos que o tipo de \texttt{g} possui as seguintes restri\c{c}\~oes:
+\begin{center}
+	$\kappa=\{$\texttt{Foo [a] b, Foo [b] a}$\}$
+\end{center}
+A regra 1) especifica que a 
+restri\c{c}\~ao \texttt{Foo [a] b} pode ser unificada com a inst\^ancia 
+\texttt{Foo a b $\Rightarrow$ Foo [a] [b]} produzindo a seguinte substitui\c{c}\~ao:
+\begin{center}
+	$S^{\prime}=\{$\texttt{b $\mapsto$ [b]}$\}$
+\end{center} 
+A nova configura\c{c}\~ao do algoritmo ser\'a formada pela substitui\c{c}\~ao $S^{\prime}$ e pela aplica\c{c}\~ao desta
+ao novo conjunto de restri\c{c}\~oes $\kappa^{\prime}$, que ser\'a igual a:
+\begin{equation*}
+	\begin{array}{ll}
+		\kappa^{\prime} & = \{\delta\,|\, \delta\in S\,\kappa\land tv(\delta)\neq\emptyset\}\cup\kappa_{1}\\
+	\end{array}
+\end{equation*} 
+onde $\kappa_{1}=\{$\texttt{Foo a b}$\}$ e $S=id$. Desta maneira, temos que $\kappa^{\prime}$ ser\'a igual a:
+\begin{equation*}
+	\begin{array}{ll}
+		\kappa^{\prime} & = S^{\prime}\{\text{\texttt{Foo [a] b, Foo a [b]}}\}\cup\{\text{\texttt{Foo a b}}\}
+	\end{array}
+\end{equation*}
+Ao aplicarmos a substitui\c{c}\~ao $S^{\prime}$ a $\kappa^{\prime}$ obteremos o seguinte conjunto de restri\c{c}\~oes:
+\begin{equation*}
+	\begin{array}{ll}
+		\kappa^{\prime} & = \{\text{\texttt{Foo [a] [b], Foo a [[b]]}}\text{, \texttt{Foo a [b]}}\}
+	\end{array}
+\end{equation*}
+Com isso temos que o estado do algoritmo ser\'a descrito pelo par ($S^{\prime}\circ\,id$, $\kappa^{\prime}$) que ser\'a
+submetido a uma nova itera\c{c}\~ao do processo de resolu\c{c}\~ao. 
+Novamente, pela regra 1) do algoritmo, temos que a restri\c{c}\~ao 
+\texttt{Foo [a] [b]} unifica com a inst\^ancia \texttt{Foo a b $\Rightarrow$ Foo [a] [b]} produzindo a substitui\c{c}\~ao
+$S^{\prime\prime}=id$ e o seguinte conjunto de restri\c{c}\~oes:
+\begin{equation*}
+	\begin{array}{ll}
+		\kappa^{\prime\prime} & = \{\text{\texttt{Foo a b, Foo [a] [b], Foo a [[b]], Foo a [b]}}\}
+	\end{array}
+\end{equation*}
+Observe que neste \'ultimo passo a restri\c{c}\~ao \texttt{Foo a b} \'e re-inserida no conjunto de restri\c{c}\~oes, o 
+que faz com que todo processo descrito se repita e cause a n\~ao termina\c{c}\~ao do algoritmo. 
+
+Um problema desta 
+abordagem \'e que este algoritmo \'e sempre executado durante o processo de infer\^encia para produ\c{c}\~oes 
+\emph{let}. Os autores n\~ao especificam nenhum crit\'erio para determinar quando
+o processo de resolu\c{c}\~ao deve ser acionado para um determinado conjunto de restri\c{c}\~oes. 
+
+
+\subsubsection{A Proposta de Sulzmann}
+
+Outra proposta para verifica\c{c}\~ao / infer\^encia de classes de tipos com m\'ultiplos par\^ametros \'e apresentada 
+em \cite{Sulzmann06c}. Neste trabalho os autores estabelecem as seguintes restri\c{c}\~oes para a decidibilidade do
+processo de infer\^encia:
+\begin{itemize}
+	\item Contextos presentes em defini\c{c}\~oes de inst\^ancias podem somente referenciar var\'aveis de tipos e em
+	      cada restri\c{c}\~ao todas as vari\'aveis nela contidas devem ser distintas, isto \'e toda restri\c{c}\~ao
+	      $C\,\overline{\mu}$ deve ser tal que $\neg\exists\,\tau_{1},\tau_{2}\in\overline{\mu}.\,\tau_{1} = \tau_{2}$.
+	\item Em uma declara\c{c}\~ao de inst\^ancia \texttt{instance $\kappa\,\Rightarrow$ C $\overline{\mu}$}, 
+	      pelo menos um tipo $\tau_{i}$, 
+	      $1\leq i\leq |\overline{\mu}|$, n\~ao deve ser uma vari\'avel e $tv(\kappa)\subseteq tv(\overline{\mu})$.
+	\item Inst\^ancias n\~ao devem ser sobrepostas. Para quaisquer duas inst\^ancias:
+	\begin{itemize}
+		\item[\ ] \texttt{instance $\kappa_{1}\,\Rightarrow$ C $\overline{\mu_{1}}$}
+		\item[\ ] \texttt{instance $\kappa_{2}\,\Rightarrow$ C $\overline{\mu_{2}}$}
+	\end{itemize} 
+	      n\~ao existe uma substitui\c{c}\~ao $S$ tal que $S\,\overline{\mu_{1}} = S\,\overline{\mu_{2}}$.
+\end{itemize}
+Se o programa satisfizer estas condi\c{c}\~oes, \'e provado pelos autores que al\'em de decid\'ivel, o processo de 
+infer\^encia produz tipos principais \cite{Sulzmann06c}. A prova utiliza uma redu\c{c}\~ao de um programa Haskell
+contendo classes / inst\^ancias / tipos de dados que satisfazem estas restri\c{c}\~oes \`a um programa expresso em
+\emph{regras de manipula\c{c}\~ao de restri\c{c}\~oes}\footnote{do ingl\^es: \emph{Constraint Handling Rules}.}
+\cite{Fruhwirth95}. Tal prova n\~ao ser\'a apresentada por estar fora do escopo deste trabalho.
+
+\section{Depend\^encias Funcionais}\label{fundeps}
+
+\subsection{Introdu\c{c}\~ao}
+
+A utiliza\c{c}\~ao de classes de tipo com m\'ultiplos par\^ametros, apesar de ser uma extens\~ao \'util
+para a defini\c{c}\~ao de s\'imbolos sobrecarregados, facilita o aparecimento de tipos amb\'ig\"uos.  
+ Como exemplo (transcrito de \cite{Haskell07}), considere a seguinte tentativa de 
+ generaliza\c{c}\~ao da classe \texttt{Num}:
+\begin{flushleft}
+   \texttt{class Add a b r where}\\
+   \verb|   (+) :: a |$\rightarrow$ \verb|b| $\rightarrow$ \verb|r|\\
+   \texttt{instance Add Int Int Int where $\ldots$}\\
+   \texttt{instance Add Int Float Float where $\ldots$}\\
+\end{flushleft}
+
+Com isto, permite-se que o programador defina inst\^ancias para somar n\'umeros de diferentes 
+tipos, escolhendo o tipo do resultado com base no tipo dos argumentos e no contexto no qual a soma ocorre. 
+Apesar desta parecer uma boa solu\c{c}\~ao, ela faz com que express\~oes simples tenham tipos amb\'ig\"uos. Como exemplo,
+considere a seguinte express\~ao: \texttt{n = (x + y) + z}, onde \texttt{x}, \texttt{y} e \texttt{z} s\~ao do tipo 
+\texttt{Int}. O compilador \texttt{GHC} infere o seguinte tipo para \texttt{n} (se as op\c{c}\~oes que desabilitam a
+restri\c{c}\~ao de monomorfismo \footnote{
+{\parindent 0pt \progd{{ \textit{main}\/} \=\kill
+      $f$ \>= {\textit{show}}\\
+      $g$ \>= $\backslash x$ $\rightarrow$ {\textit{show}\/} $x$\\
+      $h$:: ({\textit{Show}\/} $a$) $\Rightarrow$ $a$ $\rightarrow$ {\textit{String}}\\
+      $h$ \>= {\textit{show}}\\
+      {\textit{main}\/} \>= {\textit{putStrLn}\/} ($\oplus$ '1',$\oplus$ {\textit{True}\/})
+}}
+\hspace*{.2cm}
+\begin{minipage}[t]{.4\textwidth}{{\parindent 0pt 
+\vspace*{\baselineskip}
+A restri\c{c}\~ao de monomorfismo especifica que a fun\c{c}\~ao $f$ n\~ao pode ser utilizada
+no lugar de $\oplus$, enquanto $g$ e $h$ podem. A restri\c{c}\~ao de monomorfismo pro\'ibe $f$ de possuir um tipo
+polim\'orfico restringido. Tal restri\c{c}\~ao \'e imposta para evitar tipos amb\'iguos e a avalia\c{c}\~ao de 
+express\~oes onde \'e esperado que o seu resultado seja compartilhado \cite{Haskell98}.}}
+\end{minipage}} 
+e permitem classes com m\'ultiplos par\^ametros forem utilizadas):
+\begin{center}
+	\texttt{n :: (Add Int Int a, Add a Int b) $\Rightarrow$ b}
+\end{center}
+Por\'em, ao adicionarmos a seguinte defini\c{c}\~ao:
+\begin{center}
+	\texttt{m = show n}
+\end{center}
+resultar\'a em um erro de tipo alertando que n\~ao existem inst\^ancias que satisfa\c{c}am as restri\c{c}\~oes:
+\begin{center}
+	\texttt{Add Int Int a, Add a Int b}
+\end{center}
+Isto ocorre porqu\^e n\~ao h\'a uma maneira de especializar a vari\'avel de tipo \texttt{a} que est\'a presente nas 
+restri\c{c}\~oes e n\~ao no tipo de \texttt{n}. J\'a que tanto \texttt{x}, \texttt{y} e \texttt{z} s\~ao do tipo 
+\texttt{Int} e existe a inst\^ancia \texttt{Add Int Int Int} pode-se conjecturar que o tipo de \texttt{n} ser\'a
+\texttt{Int}. Ao anotarmos \texttt{n} com o tipo \texttt{Int} obtemos o mesmo erro de tipo afirmando que as 
+restri\c{c}\~oes \texttt{Add Int Int a, Add a Int b} n\~ao podem ser satisfeitas.
+
+\'E poss\'ivel contornar (embora n\~ao solucionar) este problema com a utiliza\c{c}\~ao de 
+\emph{depend\^encias funcionais} \cite{Jones00}. A id\'eia \'e declarar explicitamente uma rela\c{c}\~ao 
+de depend\^encia entre os par\^ametros da classe. Utilizando depend\^encias funcionais, a classe \texttt{Add} ficaria:
+\begin{center}
+   \texttt{Add a b r $|$ a b $\rightarrow$ r where $\ldots$}
+\end{center}
+
+A express\~ao \texttt{a b $\rightarrow$ r} significa que os tipos \texttt{a} e \texttt{b} identificam
+unicamente o tipo \texttt{r}. Depend\^encias funcionais s\~ao utilizadas 
+para restringir as poss\'iveis inst\^ancias que um programador pode declarar para 
+uma certa classe de tipos, do mesmo modo que classes de tipos s\~ao usadas para restringir 
+os poss\'iveis valores que vari\'aveis de tipo podem assumir em tipos polim\'orficos. Com isto, a depend\^encia
+funcional \texttt{a b $\rightarrow$ r} na classe \texttt{Add}, impede a defini\c{c}\~ao das seguintes inst\^ancias:
+\begin{center}
+   \verb|instance Add Int Int Int where   ...|\\
+   \verb|instance Add Int Int Float where ...|\\
+\end{center}
+
+Isto ocorre porqu\^e os tipos correspondentes \`as vari\'aveis \texttt{a} e \texttt{b} n\~ao 
+determinam unicamente o tipo de \texttt{r}. Nestas duas inst\^ancias as vari\'aveis \texttt{a} 
+e \texttt{b}  assumem o tipo \texttt{Int} que n\~ao determina unicamente o tipo da vari\'avel 
+\texttt{r}, que pode assumir os tipos \texttt{Int} e \texttt{Float}. Para contornar este 
+problema, uma destas inst\^ancias tem que ser removida.
+
+\subsection{Problemas com Depend\^encias Funcionais}\label{fundepsproblems}
+
+Conforme apresentado anteriormente, depend\^encias funcionais permitem ao programador exercer algum controle sobre o 
+processo de infer\^encia de tipos, pois esta extens\~ao permite a especializa\c{c}\~ao de tipos inferidos com base nas
+depend\^encias funcionais declaradas pelo programador. Por\'em, o uso inadequado deste recurso pode levar a
+comportamentos inesperados, como por exemplo a n\~ao termina\c{c}\~ao do processo de infer\^encia \cite{Sulzmann06a}.
+Tal fato decorre da utiliza\c{c}\~ao de depend\^encias funcionais pelo algoritmo de satisfazibilidade de 
+restri\c{c}\~oes. Como um exemplo deste inconveniente, considere o trecho de c\'odigo apresentado na figura 
+\ref{nonend}.
+\begin{figure}[h]
+	\begin{flushleft}
+\verb|	    |\texttt{class Mult a b c | a b -> c}\\
+\verb|        |\texttt{(*) :: a -> b -> c}\\
+\verb|  |\\   
+\verb|	    |\texttt{type Vector b = [b]}\\
+\verb|  |\\
+\verb|	    |\texttt{instance Mult a b c $\Rightarrow$ Mult a (Vector b) (Vector c) where}\\ 
+\verb|   	     |\texttt{...}\\
+\verb|  |\\
+\verb|     |\texttt{f b x y = if b then (*) x [y] else y}
+	\end{flushleft}
+	\centering
+	\caption{C\'odigo que causa n\~ao termina\c{c}\~ao da infer\^encia de tipos}
+	\label{nonend}
+\end{figure}
+Como \texttt{f} utiliza o s\'imbolo sobrecarregado \texttt{(*)} em sua defini\c{c}\~ao, a restri\c{c}\~ao:
+\begin{center}
+	\texttt{Mult a (Vector b) b} 
+\end{center}
+dever\'a ser adicionada ao tipo de \texttt{f}. Por\'em, ao utilizarmos a depend\^encia \texttt{a b -> c} e
+a inst\^ancia:
+\begin{center}
+\texttt{instance Mult a b c $\Rightarrow$ Mult a (Vector b) (Vector c) ...}
+\end{center}
+temos que \texttt{b = Vector c} para algum \texttt{c}. Aplicando a substitui\c{c}\~ao:
+\begin{center} 
+	\texttt{$S=\{$ b $\mapsto$ Vector c $\}$}
+\end{center}
+sobre a restri\c{c}\~ao \texttt{Mult a (Vector b) b} obtemos:
+\begin{center}
+ \texttt{Mult a (Vector (Vector c)) (Vector c)}
+\end{center} 
+que pode ser simplificada para \texttt{Mult a (Vector c) c} usando a inst\^ancia declarada no trecho de c\'odigo 
+da figura \ref{nonend}. Mas, a restri\c{c}\~ao \texttt{Mult a (Vector c) c}  \'e id\^entica a 
+\texttt{Mult a (Vector b) b} a menos do renomeamento de vari\'aveis, o que faz o algoritmo de infer\^encia n\~ao
+terminar. 
+
+Devido a possibilidade de n\~ao termina\c{c}\~ao do processo de infer\^encia, restri\c{c}\~oes devem ser impostas 
+\`as declara\c{c}\~oes de classes / inst\^ancias para permitir que o algoritmo de infer\^encia sempre termine.
+Na se\c{c}\~ao \ref{inffundeps}, ser\~ao apresentadas restri\c{c}\~oes para garantir a corretude e decidibilidade 
+do algoritmo de infer\^encia.     
+
+\subsection{Verifica\c{c}\~ao e Infer\^encia de Tipos}\label{inffundeps}
+
+Conforme apresentado anteriormente, depend\^encias funcionais s\~ao utilizadas para: restringir o conjunto de 
+poss\'iveis inst\^ancias de uma classe de tipos com m\'ultiplos par\^ametros e especializa\c{c}\~ao de tipos
+durante o processo de infer\^encia. Nesta se\c{c}\~ao apresentaremos, de maneira suscinta, como depend\^encias
+funcionais s\~ao utilizadas por compiladores Haskell no processo de verifica\c{c}\~ao e infer\^encia de tipos.
+
+\subsubsection{Restri\c{c}\~oes para Garantir Corretude e Decidibilidade}
+
+Primeiramente, s\~ao impostas algumas restri\c{c}\~oes sobre o formato de classes e
+inst\^ancias:
+\begin{itemize}
+	\item Seja $\kappa$ um contexto presente em uma classe ou inst\^ancia. Para cada restri\c{c}\~ao 
+	$C\,\overline{\mu}\in\kappa$ temos que $\overline{\mu}$ deve ser formado apenas por vari\'aveis de tipo e 
+	todas estas devem ser distintas.
+	\item Em uma declara\c{c}\~ao de inst\^ancia \texttt{instance $\kappa\,\Rightarrow\,$ C $\overline{\mu}$ where...}, 
+	      pelo menos um dos tipos $\tau_{i}\in\overline{\mu}$, $1\leq i\leq |\overline{\mu}|$, 
+	      n\~ao deve ser uma vari\'avel de tipo.
+	\item Inst\^ancias n\~ao devem ser sobrepostas. Isto \'e, para quaisquer duas inst\^ancias:
+	      \begin{itemize}
+	      	\item[\ ] \texttt{instance $\kappa_{1}\,\Rightarrow\,$ C $\overline{\mu_{1}}$ where...}
+	      	\item[\ ] \texttt{instance $\kappa_{2}\,\Rightarrow\,$ C $\overline{\mu_{2}}$ where...}
+	      \end{itemize}
+	      n\~ao existe uma substitui\c{c}\~ao $S$ tal que $S\,\overline{\mu_{1}}\,=\,S\,\overline{\mu_{2}}$.
+\end{itemize}
+
+Al\'em destas restri\c{c}\~oes sobre classes e inst\^ancias, \cite{Jones00} apresenta restri\c{c}\~oes sobre a 
+defini\c{c}\~ao de depend\^encias funcionais:
+\begin{itemize}
+	\item \textbf{Consist\^encia}: Considere a seguinte declara\c{c}\~ao de classe \texttt{C} e de duas inst\^ancias
+	      para esta classe:
+	      \begin{flushleft}
+\verb|       |\texttt{class $\kappa\,\Rightarrow\,$ C $\overline{\alpha}$ | $fd_{1}$,...,$fd_{n}$}\\
+\verb| |\\
+\verb|       |\texttt{instance $\kappa_{1}\,\Rightarrow$ C $\overline{\mu_{1}}$ where...}\\
+\verb|       |\texttt{instance $\kappa_{2}\,\Rightarrow$ C $\overline{\mu_{2}}$ where...}\\
+	      \end{flushleft}  
+	      Ent\~ao para cada depend\^encia funcional \texttt{$fd_{i}$}, $1\leq i\leq n$, da forma 
+	      $\alpha_{i1},...,\alpha_{ik}\rightarrow \alpha_{i0}$, temos que a seguinte condi\c{c}\~ao deve ser verdadeira
+	      para toda substitui\c{c}\~ao $S$:
+	      \begin{center} 
+$S\,\{\tau_{i1},...,\tau_{ik}\}\,=\,S\{\tau^{\prime}_{i1},...,\tau^{\prime}_{ik}\}\,\rightarrow\, 
+        S\,\tau_{i0}=S\,\tau^{\prime}_{i0}$ 
+	      \end{center}
+	      onde $\overline{\mu_{1}}=\{\tau_{i0},\tau_{i1},...,\tau_{ik}\}$ e 
+	      $\overline{\mu_{2}}=\{\tau^{\prime}_{i0},\tau^{\prime}_{i1},...,\tau^{\prime}_{ik}\}$.	      
+    \item \textbf{Cobertura}\footnote{do ingl\^es: \emph{Coverage}.}: Considere a seguinte declara\c{c}\~ao da 
+          classe \texttt{C}, e uma inst\^ancia qualquer desta classe:
+	      \begin{flushleft}
+\verb|       |\texttt{class $\kappa\,\Rightarrow\,$ C $\overline{\alpha}$ | $fd_{1}$,...,$fd_{n}$}\\
+\verb| |\\
+\verb|       |\texttt{instance $\kappa_{1}\,\Rightarrow$ C $\overline{\mu_{1}}$ where...}\\
+	      \end{flushleft}  
+          Ent\~ao para cada depend\^encia funcional \texttt{$fd_{i}$}, $1\leq i\leq n$, da forma 
+	      $\alpha_{i1},...,\alpha_{ik}\rightarrow \alpha_{i0}$, deve ser verdade que:
+	      \begin{center}
+	      	 $tv(\tau_{i0})\subseteq tv(\tau_{i1},...,\tau_{ik})$
+	      \end{center}
+	      onde onde $\overline{\mu_{1}}=\{\tau_{i0},\tau_{i1},...,\tau_{ik}\}$.
+\end{itemize}
+A restri\c{c}\~ao de consist\^encia \'e utilizada para evitar declara\c{c}\~oes de inst\^ancias inconsistentes, 
+como o exemplo de c\'odigo da figura \ref{inconsist}:
+\begin{figure}[h]
+	\begin{flushleft}
+\verb|        |\texttt{class Mult a b c | a b -> c where}\\ 
+\verb|           |\texttt{(*) :: a -> b -> c}\\
+\verb| |\\			
+\verb|        |\texttt{instance Mult Int Float Float where ... --- (1)}\\
+\verb| |\\		
+\verb|        |\texttt{instance Num a $\Rightarrow$ Mult Int a Int where ... --- (2)}\\
+	\end{flushleft}
+	\centering
+	\caption{Exemplo de inst\^ancias que violam a restri\c{c}\~ao de consist\^encia}
+	\label{inconsist}
+\end{figure} 
+Neste exemplo temos que a substitui\c{c}\~ao $S=\{$\texttt{a $\mapsto$ Float}$\}$ viola a condi\c{c}\~ao de 
+consist\^encia, uma vez que ao aplicarmos esta substitui\c{c}\~ao a cada uma das inst\^ancias da figura \ref{inconsist}
+obtemos: \texttt{Mult Int Float Float} e \texttt{Mult Int Float Int}.
+
+A restri\c{c}\~ao de cobertura garante que o dom\'inio de
+uma depend\^encia determina complementamente a imagem desta. Se $\alpha_{i1},...,\alpha_{ik}\rightarrow \alpha_{i0}$ 
+\'e uma depend\^encia funcional, o conjunto $\{\alpha_{i1},...,\alpha_{ik}\}$ \'e o dom\'inio desta depend\^encia e 
+$\{\alpha_{i0}\}$ \'e a sua imagem. Considere como exemplo, o seguinte trecho de c\'odigo da figura \ref{covering}.
+
+\begin{figure}[h]
+	\begin{flushleft}
+\verb|	    |\texttt{class Mult a b c | a b -> c}\\
+\verb|        |\texttt{(*) :: a -> b -> c}\\
+\verb|  |\\   
+\verb|	    |\texttt{instance Mult a b c $\Rightarrow$ Mult a (Vector b) (Vector c) where}\\ 
+\verb|   	     |\texttt{...}\\
+	\end{flushleft}
+	\centering
+	\caption{Exemplo de inst\^ancia que viola a condi\c{c}\~ao de cobertura}
+	\label{covering}
+\end{figure}
+Suponha que instanciemos os dois primeiros par\^ametros da classe \texttt{Mult} para \texttt{Int} e \texttt{Vector Int}.
+Tal instancia\c{c}\~ao n\~ao determina obrigatoriamente um valor para a vari\'avel \texttt{c}, j\'a que 
+\texttt{$\{$c$\}$ $\not\subseteq tv(\{$a, Vec b$\})$}. A viola\c{c}\~ao da condi\c{c}\~ao de cobertura por uma 
+declara\c{c}\~ao de inst\^ancia acarreta a n\~ao termina\c{c}\~ao do algoritmo de verifica\c{c}\~ao / infer\^encia de 
+tipos \cite{Sulzmann06a}.
+
+
+As restri\c{c}\~oes acima n\~ao s\~ao suficientes para garantir que o processo de 
+infer\^encia de tipos seja correto. Al\'em destas j\'a citadas anteriormente, faz-se necess\'aria a
+seguinte restri\c{c}\~ao:
+
+\begin{itemize}
+	\item \textbf{Condi\c{c}\~ao sobre Vari\'aveis Ligadas}: Para cada declara\c{c}\~ao de classe 
+	   \begin{center}
+	    	\texttt{class $\kappa\,\Rightarrow$ C $\overline{\alpha}$ | $fd_{1}$,...,$fd_{n}$}
+	   \end{center}
+	   deve ser verdade que $tv(\kappa)\subseteq\overline{\alpha}$ e para cada inst\^ancia 
+	   \begin{center}
+	        \texttt{instance $\kappa_{1}\,\Rightarrow$ C $\overline{\mu_{1}}$ where ...}
+	   \end{center}
+	   deve ser verdade que $tv(\kappa_{1})\subseteq tv(\overline{\mu_{1}})$.
+\end{itemize}
+
+As tr\^es restri\c{c}\~oes (consist\^encia, cobertura e vari\'aveis ligadas) garantem a corretude e termina\c{c}\~ao do
+processo de infer\^encia de tipos. A prova desta afirma\c{c}\~ao est\'a fora do escopo deste trabalho, mas pode ser
+encontrada em \cite{Sulzmann06a}.
+
+\subsubsection{Detec\c{c}\~ao de Amb\"uiguidade}
+
+Uma express\~ao $e$ \'e dita ser semanticamente amb\'igua se duas ou mais denota\c{c}\~oes distintas podem ser obtidas
+para ela, usando sua deriva\c{c}\~ao de tipos \cite{Mitchell96}. De acordo com a defini\c{c}\~ao da linguagem Haskell,
+um tipo $\forall\overline{\alpha}.\kappa\Rightarrow\tau$ \'e considerado amb\'iguo se 
+$\exists v.v\in\,(tv(\kappa)\cap\overline{\alpha})\land v\not\in\, tv(\tau)$ \cite{Haskell98}. 
+
+Para apresentar como \'e feita a detec\c{c}\~ao de ambig\"uidade utilizando depend\^encias funcionais, primeiramente
+devemos fazer algumas defini\c{c}\~oes e em seguida as explicaremos por meio de um exemplo. 
+Se $F$ \'e um conjunto de depend\^encias funcionais, $J\subseteq I$ \'e um
+conjunto de \'indices, ent\~ao o fechamento de $J$ com respeito a $F$, $J^{+}_{F}$, \'e o menor conjunto tal que 
+(onde $X=\{\alpha_{1},...,\alpha_{n}\}$ e $Y=\{\alpha_{0}\}$):
+\begin{itemize}
+	\item $J\subseteq J^{+}_{F}$
+	\item $\forall\,(X\,\rightarrow\,Y)\in\, F\,.\, X\subseteq J^{+}_{F}\rightarrow Y\subseteq J^{+}_{F}$
+\end{itemize}
+Intutivamente, $J^{+}_{F}$ \'e o conjunto de \'indices que s\~ao unicamente determinados pelos \'indices $i\in J$ ou 
+pelas deped\^encias $(X\rightarrow Y)\in F$. 
+A partir desta defini\c{c}\~ao podemos definir como \'e feita a 
+detec\c{c}\~ao de ambig\"uidade utilizando depend\^encias funcionais. O tipo 
+$\forall\overline{\alpha}.\kappa\Rightarrow\tau$ \'e considerado amb\'iguo se
+$\exists v.v\in\,(tv(\kappa)\cap\overline{\alpha})\land v\not\in\, (tv(\tau))^{+}_{F_{\kappa}}$, onde $F_{\kappa}$ \'e
+definido como: 
+$F_{\kappa}=\{tv(\overline{\mu}_{X})\rightarrow tv(\overline{\mu}_{Y})\,\, |\,\,(C\,\, \overline{\mu}) 
+				\in \kappa \land (X\rightarrow Y) \in F_{C}\}$, $F_{C}=\{fd_{1},\,...,\,fd_{n}\}$ \'e o conjunto
+de depend\^encias funcionais da classe \texttt{C}
+e $\overline{\mu}_{X}$ representa a proje\c{c}\~ao da sequ\^encia $\overline{\mu}$ sobre $X$.
+
+Para exemplificar as defini\c{c}\~oes anteriores considere o seguinte trecho de programa: 
+
+\begin{figure}[h]
+	\begin{flushleft}
+\verb|     |\texttt{class C a b | a -> b where}\\
+\verb|         |\texttt{c :: a -> b}\\
+\verb|     |\\
+\verb|     |\texttt{h :: (C a b) $\Rightarrow$ a -> Bool}\\
+\verb|     |\texttt{h x = (c x) == (c x)}		
+	\end{flushleft}
+	\caption{Trecho de c\'odigo contendo um tipo n\~ao amb\'iguo.}
+\end{figure}
+De acordo com a defini\c{c}\~ao da linguagem Haskell, o tipo da fun\c{c}\~ao \texttt{h} \'e amb\'iguo uma vez que:
+\begin{center} 
+$\text{\texttt{b}}\in\,tv(\{\text{\texttt{C a b, Eq b}}\})\land\,\text{\texttt{b}}\not\in\,tv(\text{\texttt{a -> a}})$
+\end{center}
+Por\'em, de acordo com as defini\c{c}\~oes desta se\c{c}\~ao, o tipo de \texttt{h} n\~ao \'e amb\'iguo \cite{Jones00}. 
+Para entender o porqu\^e, considere o conjunto de restri\c{c}\~oes sobre o tipo de \texttt{h}:
+\begin{center}
+	$\kappa=\{$\texttt{C a b, Eq b}$\}$
+\end{center}
+Informalmente, o tipo
+\begin{center} 
+	\texttt{$\forall$ a b.(C a b, Eq b) $\Rightarrow$ a -> Bool}
+\end{center} 
+ser\'a amb\'iguo se existir uma vari\'avel que seja
+universalmente quantificada e perten\c{c}a \`as restri\c{c}\~oes presentes em $\kappa$ e n\~ao esteja contida no
+fechamento das vari\'aveis do tipo simples $\tau = $ \texttt{a -> Bool} com respeito ao conjunto de depend\^encias
+$F_{\{\text{\texttt{C a b, Eq b}}\}}$. A partir das defini\c{c}\~oes anteriores, temos que o conjunto 
+$F_{\{\text{\texttt{C a b, Eq b}}\}}$ ser\'a igual a:
+\begin{center}
+	$F_{\{\text{\texttt{C a b, Eq b}}\}}=\{\text{\texttt{a -> b}}\}$
+\end{center}
+e o fechamento deste sobre as vari\'aveis de tipo de $\tau = $ \texttt{a -> Bool} \'e:
+\begin{center} 
+	$\{\text{\texttt{a}}\}^{+}_{F_{\{\text{\texttt{C a b, Eq b}}\}}}=\{$\text{\texttt{a,b}}$\}$
+\end{center}
+Ent\~ao de acordo com \cite{Jones00}, o tipo 
+\begin{center} 
+	\texttt{$\forall$ a b.(C a b, Eq b) $\Rightarrow$ a -> Bool}
+\end{center} 
+ser\'a amb\'iguo se:
+\begin{center}
+$\exists v.v\in\,(tv(\kappa)\cap\overline{\alpha})\land v\not\in\, (tv(\tau))^{+}_{F_{\kappa}}$
+\end{center}
+mas:
+\begin{itemize}
+	\item $\kappa=\{$\texttt{C a b, Eq b}$\}$ temos que $tv(\kappa)=\{$\texttt{a,b}$\}$.
+	\item Como $\tau\,=$ \texttt{a -> Bool}, temos que $tv(\tau)=\{$\texttt{a}$\}$ e que
+	      $\{\text{\texttt{a}}\}^{+}_{F_{\{\text{\texttt{C a b, Eq b}}\}}}=\{$\text{\texttt{a,b}}$\}$.
+\end{itemize} 
+O que nos faz concluir que $tv(\kappa)=\{\text{\texttt{a}}\}^{+}_{F_{\{\text{\texttt{C a b, Eq b}}\}}}$ e portanto, 
+de acordo com a defini\c{c}\~ao de \cite{Jones00}, o tipo de \texttt{h} n\~ao \'e amb\'iguo.
+
+\subsubsection{Especializa\c{c}\~ao de Tipos}
+
+Uma depend\^encia funcional pode ser utilizada de duas formas para especializar tipos inferidos\cite{Jones00}. 
+Seja $C$ uma classe e $X\rightarrow Y \in F_{C}$, ent\~ao:
+\begin{itemize}
+	\item Suponha que existam duas restri\c{c}\~oes $C\,\overline{\mu_{1}}$ e $C\,\overline{\mu_{2}}$. 
+	      Se $\overline{\mu_{1}}_{X} = \overline{\mu_{2}}_{X}$ ent\~ao 
+	      $\overline{\mu_{1}}_{Y}$ deve ser igual a $\overline{\mu_{2}}_{Y}$.
+	\item Suponha que seja inferido uma restri\c{c}\~ao $C\,\overline{\mu_{1}}$ e que exista uma inst\^ancia:
+	\begin{center}
+		\texttt{instance $\kappa\Rightarrow\,\,C\,\overline{\mu_{2}}$ where ...}
+	\end{center}
+	Se $\overline{\mu_{1}}_{X} = S\,\overline{\mu_{2}}_{X}$, para alguma substitui\c{c}\~ao $S$, 
+	ent\~ao $\overline{\mu_{1}}_{Y}$ e $S\,\overline{\mu_{2}}_{Y}$ devem ser iguais.
+\end{itemize}
+
+Em ambos os casos, pode-se usar unifica\c{c}\~ao para garantir que as igualdades citadas sejam satisfeitas. Se a
+unifica\c{c}\~ao falha, ent\~ao pode-se concluir que um erro de tipo foi encontrado. Caso contr\'ario, \'e obtida
+uma substitui\c{c}\~ao que pode ser utilizada para especializar os tipos inferidos. Estas duas regras para 
+especializa\c{c}\~ao de tipos podem ser aplicadas repetidamente durante o processo de infer\^encia enquanto houverem
+oportunidades para especializa\c{c}\~ao dos tipos inferidos \cite{Jones00, Jones09}.
+
+\section{Fam\'ilias de Tipos}\label{typefam}
+
+\subsection{Introdu\c{c}\~ao}
+
+Algumas linguagens experimentais como \emph{ATS} \cite{Chen05}, \emph{Cayenne} \cite{Augustsson98} e \emph{Chamaleon}
+\cite{Sulzmann06b} permitem ao programador definir v\'arias formas de fun\c{c}\~oes de tipos, o que os permite
+escrever programas completos no n\'ivel de tipos. Em Haskell, duas extens\~oes ao sistema de tipos permitem expressar
+computa\c{c}\~oes no n\'ivel de tipos\footnote{do ingl\^es: \emph{Type level}}: depend\^encias funcionais e fam\'ilias
+de tipos.
+
+Fam\'ilias indexadas de tipos \footnote{do ingl\^es: \emph{Indexed Type Families}}, ou simplesmente fam\'ilias de tipos,
+s\~ao uma extens\~ao ao sistema de tipos de Haskell que permitem a sobrecarga de tipos de dados, isto \'e, fam\'ilias 
+permitem a sobrecarga de tipos de dados da mesma maneira que classes permitem a sobrecarga de fun\c{c}\~oes 
+\cite{Chakravarty05,Chakravarty05a}.
+
+O conceito de fam\'ilia de tipo pode ser definido formalmente como uma fun\c{c}\~ao parcial no n\'ivel de 
+tipos, permitindo assim um programa computar quais sobre quais construtores de
+dados ele ir\'a operar, ao inv\'es de deix\'a-los fixos estaticamente. Como um primeiro exemplo, considere a seguinte 
+defini\c{c}\~ao de uma fam\'ilia para representar mapeamentos finitos:
+\begin{figure}[h]
+	\begin{verbatim}
+   class GMapKey k where
+      data GMap k :: * -> *
+      empty       :: GMap k v
+      lookup      :: k -> GMap k v -> Maybe v
+      insert      :: k -> v -> GMap k v -> GMap k v
+	\end{verbatim}
+	\centering
+	\caption{Defini\c{c}\~ao de mapeamentos finitos usando fam\'ilias de tipos.}
+	\label{fammapex}
+\end{figure}
+
+Esta defini\c{c}\~ao \'e an\'aloga a uma defini\c{c}\~ao de classe de tipo convencional, exceto pela presen\c{c}a de
+uma \emph{fam\'ilia de tipos associada}\footnote{do ingl\^es: \emph{Associated Type Family}.}: 
+\texttt{data GMap k :: * -> *}. Observe que esta declara\c{c}\~ao de fam\'ilia define um nome para esta fam\'ilia 
+(\texttt{GMap}), uma vari\'avel de tipos e o respectivo \emph{kind}\footnote{\emph{Kinds} classificam tipos da mesma
+maneira que tipos classificam valores. O \emph{kind} \texttt{*} \'e dito ser o \emph{kind} de tipos. Ent\~ao, 
+\texttt{* -> *} \'e o \emph{kind} de fun\c{c}\~oes que mapeiam um tipo em outro.} de \texttt{GMap k}.
+Cabe ressaltar que a fam\'ilia \texttt{GMap} utiliza como par\^ametro a mesma vari\'avel que \'e utilizada pela classe
+de tipos na qual esta fam\'ilia foi definida e, portanto, todas as inst\^ancias da fam\'ilia e da classe devem possuir
+como primeiro par\^ametro o mesmo tipo. Como exemplo de uma inst\^ancia, considere a seguinte implementa\c{c}\~ao que
+usa como chave do mapeamento um valor inteiro:
+
+\begin{figure}[h]
+   \begin{verbatim}
+   instance GMapKey Int where
+      data GMap Int v        = GMapInt (Data.IntMap.IntMap v)
+      empty                  = GMapInt Data.IntMap.empty
+      lookup k   (GMapInt m) = Data.IntMap.lookup k m
+      insert k v (GMapInt m) = GMapInt (Data.IntMap.insert k v m)   
+   \end{verbatim}
+   \centering
+   \caption{Uma inst\^ancia de Fam\'ilia Associada de Tipos.}
+   \label{fammapexint}
+\end{figure}
+
+Na inst\^ancia definida na figura \ref{fammapexint}, temos que a fam\'ilia 
+\texttt{GMap::* -> * -> *}\footnote{Se \texttt{GMap k} possui \emph{kind} \texttt{* -> *}, temos necessariamente que
+a vari\'avel \texttt{k} possui \emph{kind} \texttt{*} e o construtor de tipos \texttt{GMap} \texttt{* -> * -> *}.}
+\'e instanciada com os par\^ametros \texttt{Int}, que coincide com o par\^ametro da classe; e a vari\'avel \texttt{v} 
+criando o construtor de dados \texttt{GMapInt :: IntMap v -> GMap Int v}, que pode ser utilizado para definir 
+fun\c{c}\~oes por casamento de padr\~ao, como por exemplo, as fun\c{c}\~oes \texttt{lookup} e \texttt{insert} na
+mesma figura.
+
+Em \cite{Jones00}, um dos exemplos para motivar a utiliza\c{c}\~ao de depend\^encias funcionais \'e a defini\c{c}\~ao de
+uma classe de tipos para representar opera\c{c}\~oes sobre cole\c{c}\~oes. Este mesmo exemplo, utilizando
+fam\'ilias de tipos, \'e apresentado na figura \ref{famcolex}.
+
+\begin{figure}[h]
+	\begin{verbatim}
+	type family Elem c
+	class Collects c where
+	   empty  :: c
+	   insert :: Elem c -> c -> c
+	   member :: c -> [Elem c]
+	   
+	type instance Elem [e] = e
+	instance Eq (Elem c) => Collects [c] where ...
+	\end{verbatim}
+	\centering
+	\caption{Definindo cole\c{c}\~oes gen\'ericas usando Fam\'ilias de Tipos.}
+	\label{famcolex}
+\end{figure}
+
+No exemplo anterior, foi definida uma fam\'ilia de tipos que relaciona tipos de cole\c{c}\~oes (representadas pela 
+vari\'avel de tipos \texttt{c}) com o tipo dos elementos desta cole\c{c}\~ao. A inst\^ancia para a fam\'ilia 
+\texttt{Elem c} apresentada na figura \ref{famcolex}, mostra que se o tipo da cole\c{c}\~ao \'e \texttt{[e]}, ent\~ao
+o tipo dos elementos desta \'e \texttt{Elem [e] = e}. Agora, considere a seguinte fun\c{c}\~ao \texttt{ins}:
+\begin{center}
+	\verb|ins x c = insert x (insert 'y' c)|
+\end{center}
+e o respectivo tipo inferido para ela:
+\begin{center}
+    \verb|ins :: (Collects c, Elem c ~ Char) => Elem c -> c -> c|
+\end{center}
+Esta fun\c{c}\~ao realiza a inser\c{c}\~ao de um valor \texttt{x} em uma cole\c{c}\~ao \texttt{c}, logo depois da 
+inser\c{c}\~ao do caractere \texttt{'y'} nesta mesma cole\c{c}\~ao. Por\'em, isto restringe as poss\'iveis inst\^ancias
+da fam\'ilia \texttt{Elem} para que estas sejam iguais a \texttt{Char}, o que \'e representado no tipo de \texttt{inst}
+como \verb|Elem c ~ Char|. Tal restri\c{c}\~ao \'e dominada \emph{restri\c{c}\~ao de igualdade de tipos} 
+\cite{Sulzmann07, Schrijvers2008}. Restri\c{c}\~oes de igualdade, cuja forma geral \'e 
+$t_{1}$\verb|~|$t_{2}$ --- que representa que o tipo $t_{1}$ deve ser igual a $t_{2}$ --- podem aparecer nos mesmos
+pontos da sintaxe que restri\c{c}\~oes de classe. Portanto, a utiliza\c{c}\~ao de fam\'ilias de tipos requer o 
+acr\'escimo deste novo tipo de restri\c{c}\~oes \`a linguagem.
+
+\subsection{Problemas com Fam\'ilias de Tipos}\label{tyfunproblems}
+
+Fam\'ilias s\~ao uma extens\~ao recente \cite{Schrijvers2008}, que visa oferecer as mesmas
+funcionaliades de depend\^encias funcionais utilizando uma nota\c{c}\~ao ``funcional'' \cite{Chakravarty05}. 
+
+O principal problema desta abordagem \'e a introdu\c{c}\~ao de restri\c{c}\~oes de igualdade de tipos, que 
+implicam em uma s\'erie de dificuldades para a implementa\c{c}\~ao de um algoritmo de satisfazibilidade de
+restri\c{c}\~oes para uma rela\c{c}\~ao de equival\^encia \cite{Jones08}. Como exemplo dos poss\'iveis problemas
+causados por restri\c{c}\~oes de igualdade, suponha que durante o processo de infer\^encia a seguinte 
+restri\c{c}\~ao seja obtida:
+\begin{center}
+	\verb|F a ~ G (F a)|
+\end{center} 
+onde \texttt{F} e \texttt{G} s\~ao duas fam\'ilias de um \'unico par\^ametro. Como o operador \verb|~| representa 
+a igualdade entre tipos, podemos substituir \texttt{F a} por \texttt{G (F a)} em \texttt{G (F a)} resultando
+em \texttt{G (G (F a))} que leva um algoritmo de satisfazibilidade a n\~ao termina\c{c}\~ao. 
+ 
+Outro problema relacionado \`as restri\c{c}\~oes de igualdade \'e que estas ainda n\~ao est\~ao totalmente 
+a implementadas na vers\~ao atual do compilador GHC (vers\~ao 6.12.3). A seguinte declara\c{c}\~ao de classe: 
+\begin{flushleft}
+\verb|    |\texttt{class (F a} \verb|~| \texttt{b) $\Rightarrow$ C a b where}\\
+\verb|         type F a|
+\end{flushleft}
+\'e rejeitada pelo compilador que fornece uma mensagem de erro afirmando que n\~ao prov\^e suporte a restri\c{c}\~oes de
+ igualdade em contextos de classes. A utilidade de restri\c{c}\~oes de igualdade em contextos de classes \'e
+ permitir a convers\~ao direta de classes que utilizem depend\^encias funcionais para classes que utilizem 
+ fam\'ilias de tipos \cite{Jones08}. O trecho de c\'odigo anterior \'e equivalente \`a mesma classe utilizando
+  depend\^encias funcionais:
+ \begin{flushleft}
+ \verb|   |\texttt{class C a b | a -> b where ...}
+ \end{flushleft}
+Isto ocorre porqu\^e a restri\c{c}\~ao de igualdade (\texttt{F a} \verb|~| \texttt{b}) em conjunto com a fam\'ilia 
+associada (\texttt{F a}) for\c{c}a que toda inst\^ancia da classe \texttt{C} possua uma inst\^ancia desta fam\'ilia
+que satisfa\c{c}a \`a restri\c{c}\~ao de igualdade citada. Se a fam\'ilia (\texttt{F a}) deve ser igual a \texttt{b},
+temos que o valor da vari\'avel de tipo \texttt{a} determina o valor de \texttt{b}, exatamente como a declara\c{c}\~ao
+da depend\^encia funcional (\texttt{a -> b}).
+
+Na se\c{c}\~ao \ref{tyfunverification} s\~ao apresentadas restri\c{c}\~oes sobre a utiliza\c{c}\~ao de fam\'ilias 
+de tipos para  garantir a termina\c{c}\~ao do processo de infer\^encia.
+
+\subsection{Verifica\c{c}\~ao e Infer\^encia de Tipos}\label{tyfunverification} 
+
+Conforme apresentado na se\c{c}\~ao anterior, fam\'ilias de tipos s\~ao uma extens\~ao recente ao sistema de tipos de
+Haskell como uma alternativa \`as depend\^encias funcionais para uso de classes com m\'ultiplos par\^ametros,
+desenvolvimento de programas em n\'ivel de tipos\footnote{do ingl\^es:\emph{Type-level programs}.} e uso dos chamados
+tipos de dados alg\'ebricos generalizados\footnote{do ingl\^es: \emph{Generalized Algebraic Data Types}.}. Esta 
+se\c{c}\~ao apresenta informalmente como fam\'ilias e restri\c{c}\~oes de igualdade de tipos s\~ao utilizadas durante
+o processo de verifica\c{c}\~ao / infer\^encia de tipos para Haskell.
+
+\subsubsection{Restri\c{c}\~oes para Defini\c{c}\~ao de Fam\'ilias de Tipos}
+
+Na se\c{c}\~ao \ref{tyfunproblems} motivamos a necessidade de restri\c{c}\~oes sobre a defini\c{c}\~ao de fam\'ilias de
+tipos para garantir a termina\c{c}\~ao do algoritmo de infer\^encia. Em \cite{Schrijvers2008} \'e definido como 
+representar inst\^ancias de fam\'ilias de tipos como um sistema de rescrita de termos  confluente e 
+terminante \cite{Nipkow98}, desde que todas as inst\^ancias atendam as seguintes restri\c{c}\~oes:
+
+\begin{itemize}
+	\item A cabe\c{c}a de inst\^ancias de uma fam\'ilia n\~ao devem ser sobrepostas. Na declara\c{c}\~ao de uma
+	      inst\^ancia damos o nome de cabe\c{c}a a parte da defini\c{c}\~ao que est\'a a esquerda do s\'imbolo
+	      ``\texttt{=}'' e de corpo da inst\^ancia o lado direito. Como exemplo considere a seguinte inst\^ancia
+	      de uma fam\'ilia \texttt{F}:
+	      \begin{center}
+	      	\texttt{type instance F [a] k = (a,k)}
+	      \end{center}
+	      neste exemplo temos que a cabe\c{c}a desta declara\c{c}\~ao \'e \texttt{F [a] k} e o corpo \texttt{(a,k)}.
+    \item O corpo de uma inst\^ancia de fam\'ilia de tipos n\~ao deve possuir aplica\c{c}\~oes de fam\'ilias aninhadas.
+          Observe que com esta restri\c{c}\~ao n\~ao \'e poss\'ivel definir a seguinte inst\^ancia:
+          \begin{center}
+          	\texttt{type instance F a = G (F a)}
+          \end{center}
+          que leva a n\~ao termina\c{c}\~ao do sistema de reescrita associado, uma vez que
+          esta inst\^ancia gera a seguinte igualdade \texttt{F a} \verb|~| \texttt{G (F a)}
+          (se\c{c}\~ao \ref{tyfunproblems}).
+\end{itemize}
+
+\subsubsection{Infer\^encia de Tipos}
+
+Considere o problema de realizar infer\^encia de tipos no qual o programa (envolvendo fam\'ilias de tipos) em quest\~ao 
+n\~ao possui qualquer tipo de anota\c{c}\~ao de tipos. 
+
+De acordo com \cite{Schrijvers2008}, o algoritmo para infer\^encia de tipos envolvendo fam\'ilias de tipos \'e simples,
+sendo necess\'aria apenas uma adequa\c{c}\~ao da unifica\c{c}\~ao, que deve \emph{normalizar} os tipos a serem 
+unificados. Por\'em, deve-se ter certo cuidado ao realizar a unifica\c{c}\~ao para evitar que a normaliza\c{c}\~ao de
+tipos envolvendo fam\'ilias produza resultados inesperados\footnote{tradu\c{c}\~ao livre: \emph{get stuck}.}. Como 
+exemplo, considere a seguinte express\~ao:
+\begin{center}
+	\verb|\x -> (insert 'a' x, length c)|
+\end{center} 
+onde \texttt{insert} (definida na figura \ref{famcolex}) e \texttt{length} possuem os seguintes tipos:
+\begin{itemize}
+	\item[\ ]\texttt{insert :: Collects c $\Rightarrow$ Elem c -> c -> c}
+	\item[\ ]\texttt{length :: [a] -> Int}
+\end{itemize}
+Para inferir o tipo de \verb|\c -> (insert 'c' x, length c)|, inicialmente atribui-se uma nova vari\'avel de tipo 
+$\alpha$ para \texttt{c}. A chamada da fun\c{c}\~ao \texttt{insert} faz o algoritmo unificar o tipo \texttt{Char} 
+(tipo do par\^ametro \verb|'a'|) com o tipo do primeiro par\^ametro desta fun\c{c}\~ao (\texttt{Elem $\alpha$}), o
+que produz a restri\c{c}\~ao \texttt{Elem $\alpha$} \verb|~| \texttt{Char}. Se neste ponto tentarmos normalizar
+o tipo \texttt{Elem $\alpha$} n\~ao obteremos resultado algum, uma vez que n\~ao sabemos que tipo \'e representado pela 
+vari\'avel $\alpha$. Mas,  posteriormente temos que a chamada \texttt{length c} for\c{c}a a vari\'avel $\alpha$ a ser 
+unificada com \texttt{[$\beta$]}. Com isso temos que a restri\c{c}\~ao 
+\begin{center}
+	\texttt{Elem $\alpha$} \verb|~| \texttt{Char} 
+\end{center}
+passa a ser igual a \texttt{Elem [$\beta$]} \verb|~| \texttt{Char}. Pela inst\^ancia (definida na figura 
+\ref{famcolex}):
+\begin{center}
+	\texttt{type instance Elem [e] = e}
+\end{center}
+temos que a restri\c{c}\~ao anterior pode ser simplificada para: $\alpha$ \verb|~| \texttt{Char} e com isto, o
+tipo da express\~ao \verb|\x -> (insert 'a' x, length c)| \'e inferido como:
+\begin{center}
+	\texttt{String -> (String, Int)}
+\end{center} 
+j\'a que o tipo de \texttt{insert} \'e especializado para \texttt{Char -> String -> String} devido a restri\c{c}\~ao
+de igualdade \texttt{Elem $\alpha$} \verb|~| \texttt{Char}  e da inst\^ancia definida para a fam\'ilia \texttt{Elem}.
+
+\subsubsection{Verifica\c{c}\~ao de Tipos}
+
+Segundo \cite{Schrijvers2008} os maiores problemas relativos a utiliza\c{c}\~ao de fam\'ilias de tipos \'e a 
+verifica\c{c}\~ao de tipos. Estas dificuldades s\~ao decorrentes da intera\c{c}\~ao entre inst\^ancias de fam\'ilias
+de tipos, anota\c{c}\~oes de tipos (com restri\c{c}\~oes de igualdade) fornecidas pelo programador e 
+casamento de padr\~oes sobre tipos de dados alg\'ebricos generalizados.
+
+Conforme citado anteriormente, inst\^ancias de fam\'ilias podem ser utilizadas como regras para a reescrita de 
+restri\c{c}\~oes de igualdade de tipos. O problema de verifica\c{c}\~ao de tipos na presen\c{c}a de fam\'ilias \'e
+determinar uma solu\c{c}\~ao para um conjunto de restri\c{c}\~oes de igualdade de tipos que surgem de:
+\begin{itemize}
+	\item Anota\c{c}\~oes de tipos fornecidas pelo programador.
+	\item Casamento de padr\~ao sobre tipos de dados alg\'ebricos generalizados. 
+\end{itemize}
+a partir de um conjunto de regras de reescrita que s\~ao geradas pelas inst\^ancias das fam\'ilias de tipo em quest\~ao.
+Como estes problemas n\~ao est\~ao relacionados diretamente a utiliza\c{c}\~ao de classes de tipos com m\'ultiplos 
+par\^ametros, n\~ao daremos maiores detalhes pois estes problemas est\~ao fora do escopo deste trabalho. 
+ 
+\section{O Dilema dos Projetistas de Haskell}
+
+Um dos temas mais debatidos no processo de padroniza\c{c}\~ao de uma nova especifica\c{c}\~ao de Haskell 
+\'e a ado\c{c}\~ao de classes de tipos com m\'ultiplos par\^ametros. Por\'em, acredita-se que para isso 
+\'e necess\'ario adotar uma extens\~ao que permita a utiliza\c{c}\~ao destas classes. 
+At\'e o presente momento, depend\^encias funcionais e fam\'ilias de tipos tem sido utilizadas para definir classes 
+de m\'ultiplos par\^ametros, o que motiva a seguinte pergunta:
+\begin{itemize}
+	\item[\ ] \emph{A pr\'oxima especifica\c{c}\~ao de Haskell deve adotar, como padr\~ao, depend\^encias funcionais ou
+	      fam\'ilias de tipos?}
+\end{itemize}
+Parece haver um consenso de que n\~ao \'e necess\'ario prover suporte a estas duas extens\~oes. 
+Depend\^encias funcionais possuem a vantagem de j\'a serem utilizadas em diversas implementa\c{c}\~oes. 
+Por sua vez, ainda n\~ao se tem id\'eia da expressividade de fam\'ilias de tipos. O que leva a seguinte quest\~ao:
+\begin{itemize}
+	\item[\ ] \emph{Fam\'ilias de tipos e depend\^encias funcionais possuem expressividade equivalente?}
+\end{itemize} 
+Em \cite{Chakravarty05a} \'e apresentado um argumento informal de que ambas as extens\~oes possuem a mesma
+expressividade. Mas, como tal afirmativa ainda n\~ao possui uma prova formal e ambas introduzem problemas ao j\'a
+complexo sistema de tipos de Haskell, o dilema at\'e o presente momento permanece sem solu\c{c}\~ao. 
+
+
+\section{Problemas da Abordagem usada por Haskell para Sobrecarga}
+
+Conforme apresentado nas se\c{c}\~oes anteriores, o sistema de classes de tipo de Haskell permite 
+a defini\c{c}\~ao de s\'imbolos sobrecarregados. Nesta se\c{c}\~ao s\~ao apresentados alguns dos pontos 
+que podem ser vistos como desvantagens desta abordagem para o polimorfismo de sobrecarga:
+
+\begin{itemize}
+    \item{A declara\c{c}\~ao de classes de tipo envolve uma tarefa que n\~ao \'e relacionada com a
+          resolu\c{c}\~ao da sobrecarga: a de agrupar logicamente nomes em uma mesma constru\c{c}\~ao da
+          linguagem. }
+    \item{Para qualquer nova defini\c{c}\~ao de qualquer s\'imbolo sobrecarregado o tipo desta nova
+          implementa\c{c}\~ao deve ser uma inst\^ancia do tipo declarado em sua declara\c{c}\~ao de classe,
+          ou esta deve ser modificada.}    
+    \item Mesmo para um s\'imbolo sobrecarregado para o qual todas inst\^ancias s\~ao conhecidas \emph{a priori}, 
+          deve-se
+          obrigatoriamente declarar uma classe de tipo que possua a defini\c{c}\~ao do tipo mais geral para 
+          a opera\c{c}\~ao sobrecarregada em quest\~ao.
+\end{itemize}
+
+Maiores detalhes sobre problemas relacionados a abordagem de polimorfismo de sobrecarga de 
+Haskell podem ser encontrados em \cite{Camarao99}.
+
+\section{Conclus\~ao}
+
+Neste cap\'itulo foram apresentadas as principais caracter\'isticas de Haskell para o suporte a sobrecarga. 
+Apresentamos os problemas relacionados a ambiguidade introduzida por classes de tipos com m\'ultiplos 
+par\^ametros e as principais extens\~oes propostas para sua utiliza\c{c}\~ao. Para cada uma 
+destas extens\~oes, foram apresentados exemplos de sua utiliza\c{c}\~ao e foram descritas de maneira informal 
+as restri\c{c}\~oes e os problemas decorrentes da ado\c{c}\~ao de cada uma destas.
+
+No pr\'oximo cap\'itulo \'e apresentado o sistema proposto por este trabalho que visa resolver o dilema para a 
+ado\c{c}\~ao de classes com m\'ultiplos par\^ametros. Este sistema n\~ao adiciona nenhuma complexidade adicional
+ao sistema de tipos de Haskell, o que acarreta uma implementa\c{c}\~ao mais simples de um algoritmo para 
+infer\^encia de tipos para esta linguagem.   
+

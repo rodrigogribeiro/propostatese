@@ -1,0 +1,329 @@
+\begin{thebibliography}{}
+
+\bibitem[Augustsson, 1998]{Augustsson98}
+\ppgccbibauthordoformat{Augustsson, L.} (\ppgccyeardoformat{1998}).
+\newblock \ppgccbibtitledoformat{Cayenne---a language with dependent types}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{ICFP '98: Proceedings
+  of the third ACM SIGPLAN international conference on Functional programming},
+  \ppgccbibpagesstring{}
+  \ppgccpagedoformat{239}-\ppgccpagedoformat{}-\ppgccpagedoformat{250}, New
+  York, NY, USA. ACM.
+
+\bibitem[Baader \ppgccciteauthorand{} Nipkow, 1998]{Nipkow98}
+\ppgccbibauthordoformat{Baader, F. \ppgccbibauthorand{} Nipkow, T.}
+  (\ppgccyeardoformat{1998}).
+\newblock \ppgccbibbtitledoformat{Term rewriting and all that}.
+\newblock Cambridge University Press, New York, NY, USA.
+
+\bibitem[Camar\~{a}o et~al.\@, 2004]{Camarao04}
+\ppgccbibauthordoformat{Camar\~{a}o, C.\ppgccbibauthorsep{} Figueiredo,
+  L.\ppgccbibauthorlastsep{} \ppgccbibauthorand{} Vasconcellos, C.}
+  (\ppgccyeardoformat{2004}).
+\newblock \ppgccbibtitledoformat{{Constraint-set satisfiability for
+  overloading}}.
+\newblock \ppgccbibjournaldoformat{Proceedings of the 6th ACM SIGPLAN
+  international conference on Principles and practice of declarative
+  programming - PPDP '04}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{67}-\ppgccpagedoformat{}-\ppgccpagedoformat{77}.
+
+\bibitem[Camar\~{a}o et~al.\@, 2009]{Camarao09}
+\ppgccbibauthordoformat{Camar\~{a}o, C.\ppgccbibauthorsep{} Ribeiro,
+  R.\ppgccbibauthorsep{} Figueiredo, L.\ppgccbibauthorlastsep{}
+  \ppgccbibauthorand{} Vasconcellos, C.} (\ppgccyeardoformat{2009}).
+\newblock \ppgccbibtitledoformat{{A Solution to Haskells Multi Parameter Type
+  Class Dilemma}}.
+\newblock \ppgccbibjournaldoformat{Proceedings of the Brazilian Symposium on
+  Programming Languages}.
+
+\bibitem[Camarao \ppgccciteauthorand{} Figueiredo, 1999a]{Camarao99a}
+\ppgccbibauthordoformat{Camarao, C. \ppgccbibauthorand{} Figueiredo, L.}
+  (\ppgccyeardoformat{1999a}).
+\newblock \ppgccbibtitledoformat{Type inference for overloading}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{FLOPS'99 -
+  International Workshop on Logic and Functional Programming}.
+
+\bibitem[Camarao \ppgccciteauthorand{} Figueiredo, 1999b]{Camarao99}
+\ppgccbibauthordoformat{Camarao, C. \ppgccbibauthorand{} Figueiredo, L.}
+  (\ppgccyeardoformat{1999b}).
+\newblock \ppgccbibtitledoformat{Type inference for overloading without
+  restrictions, declarations or annotations}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{Fuji International
+  Symposium on Functional and Logic Programming}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{37}--\ppgccpagedoformat{52}.
+
+\bibitem[Camarao et~al.\@, 2007]{Camarao07}
+\ppgccbibauthordoformat{Camarao, C.\ppgccbibauthorsep{} Vasconcellos,
+  C.\ppgccbibauthorsep{} Figueiredo, L.\ppgccbibauthorlastsep{}
+  \ppgccbibauthorand{} Nicola, J.} (\ppgccyeardoformat{2007}).
+\newblock \ppgccbibtitledoformat{Open and closed worlds for overloading: a
+  definition and support for coexistence}.
+\newblock \ppgccbibjournaldoformat{Journal of Universal Computer Science},
+  13(6):\ppgccpagedoformat{874}-\ppgccpagedoformat{}-\ppgccpagedoformat{890}.
+
+\bibitem[Chakravarty et~al.\@, 2005a]{Chakravarty05a}
+\ppgccbibauthordoformat{Chakravarty, M. M.~T.\ppgccbibauthorsep{} Keller,
+  G.\ppgccbibauthorlastsep{} \ppgccbibauthorand{} Jones, S.~P.}
+  (\ppgccyeardoformat{2005a}).
+\newblock \ppgccbibtitledoformat{Associated type synonyms}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{ICFP '05: Proceedings
+  of the tenth ACM SIGPLAN international conference on Functional programming},
+  \ppgccbibpagesstring{}
+  \ppgccpagedoformat{241}-\ppgccpagedoformat{}-\ppgccpagedoformat{253}, New
+  York, NY, USA. ACM.
+
+\bibitem[Chakravarty et~al.\@, 2005b]{Chakravarty05}
+\ppgccbibauthordoformat{Chakravarty, M. M.~T.\ppgccbibauthorsep{} Keller,
+  G.\ppgccbibauthorsep{} Jones, S.~P.\ppgccbibauthorlastsep{}
+  \ppgccbibauthorand{} Marlow, S.} (\ppgccyeardoformat{2005b}).
+\newblock \ppgccbibtitledoformat{{Associated types with class}}.
+\newblock \ppgccbibjournaldoformat{ACM SIGPLAN Notices},
+  40(1):\ppgccpagedoformat{1}-\ppgccpagedoformat{}-\ppgccpagedoformat{13}.
+
+\bibitem[Chen \ppgccciteauthorand{} Xi, 2005]{Chen05}
+\ppgccbibauthordoformat{Chen, C. \ppgccbibauthorand{} Xi, H.}
+  (\ppgccyeardoformat{2005}).
+\newblock \ppgccbibtitledoformat{Combining programming with theorem proving}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{In ICFP '05:
+  Proceedings of the tenth ACM SIGPLAN international conference on Functional
+  programming}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{66}-\ppgccpagedoformat{}-\ppgccpagedoformat{77}. ACM
+  Press.
+
+\bibitem[Chen et~al.\@, 1992]{Chen92}
+\ppgccbibauthordoformat{Chen, K.\ppgccbibauthorsep{} Hudak,
+  P.\ppgccbibauthorlastsep{} \ppgccbibauthorand{} Odersky, M.}
+  (\ppgccyeardoformat{1992}).
+\newblock \ppgccbibtitledoformat{Parametric type classes}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{LFP '92: Proceedings
+  of the 1992 ACM conference on LISP and functional programming},
+  \ppgccbibpagesstring{}
+  \ppgccpagedoformat{170}-\ppgccpagedoformat{}-\ppgccpagedoformat{181}, New
+  York, NY, USA. ACM.
+
+\bibitem[Damas \ppgccciteauthorand{} Milner, 1982]{Damas82}
+\ppgccbibauthordoformat{Damas, L. \ppgccbibauthorand{} Milner, R.}
+  (\ppgccyeardoformat{1982}).
+\newblock \ppgccbibtitledoformat{{Principal Type-Schemes for Functional
+  Programs}}.
+\newblock \ppgccbibpagesstring{}
+  \ppgccpagedoformat{207}-\ppgccpagedoformat{}-\ppgccpagedoformat{212}.
+
+\bibitem[Davey \ppgccciteauthorand{} Priestly, 1990]{Davey90}
+\ppgccbibauthordoformat{Davey, B.~A. \ppgccbibauthorand{} Priestly, H.~A.}
+  (\ppgccyeardoformat{1990}).
+\newblock \ppgccbibbtitledoformat{Introduction to Lattices and Order}.
+\newblock Cambridge University Press.
+
+\bibitem[Duggan \ppgccciteauthorand{} Ophel, 2002]{Duggan02a}
+\ppgccbibauthordoformat{Duggan, D. \ppgccbibauthorand{} Ophel, J.}
+  (\ppgccyeardoformat{2002}).
+\newblock \ppgccbibtitledoformat{Type-checking multi-parameter type classes}.
+\newblock \ppgccbibjournaldoformat{J. Funct. Program.},
+  12(2):\ppgccpagedoformat{133}-\ppgccpagedoformat{}-\ppgccpagedoformat{158}.
+
+\bibitem[Fax\'{e}n, 2003]{Faxen03}
+\ppgccbibauthordoformat{Fax\'{e}n, K.-F.} (\ppgccyeardoformat{2003}).
+\newblock \ppgccbibtitledoformat{Haskell and principal types}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{Haskell '03:
+  Proceedings of the 2003 ACM SIGPLAN workshop on Haskell},
+  \ppgccbibpagesstring{}
+  \ppgccpagedoformat{88}-\ppgccpagedoformat{}-\ppgccpagedoformat{97}, New York,
+  NY, USA. ACM.
+
+\bibitem[Fr\"{u}hwirth, 1995]{Fruhwirth95}
+\ppgccbibauthordoformat{Fr\"{u}hwirth, T.} (\ppgccyeardoformat{1995}).
+\newblock \ppgccbibtitledoformat{Constraint handling rules}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{Constraint
+  Programming: Basics and Trends, LNCS 910}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{90}-\ppgccpagedoformat{}-\ppgccpagedoformat{107}.
+  Springer-Verlag.
+
+\bibitem[Hudak et~al.\@, 2007]{Haskell07}
+\ppgccbibauthordoformat{Hudak, P.\ppgccbibauthorsep{} Hughes,
+  J.\ppgccbibauthorsep{} Jones, S.~P.\ppgccbibauthorlastsep{}
+  \ppgccbibauthorand{} Wadler, P.} (\ppgccyeardoformat{2007}).
+\newblock \ppgccbibtitledoformat{A history of haskell: being lazy with class}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{HOPL III: Proceedings
+  of the third ACM SIGPLAN conference on History of programming languages},
+  \ppgccbibpagesstring{}
+  \ppgccpagedoformat{12}--\ppgccpagedoformat{1}-\ppgccpagedoformat{}-\ppgccpag%
+edoformat{12}--\ppgccpagedoformat{55}, New York, NY, USA. ACM.
+
+\bibitem[Jim, 1996]{Trevor96}
+\ppgccbibauthordoformat{Jim, T.} (\ppgccyeardoformat{1996}).
+\newblock \ppgccbibtitledoformat{What are principal typings and what are they
+  good for?}
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{POPL '96: Proceedings
+  of the 23rd ACM SIGPLAN-SIGACT symposium on Principles of programming
+  languages}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{42}-\ppgccpagedoformat{}-\ppgccpagedoformat{53}, New York,
+  NY, USA. ACM.
+
+\bibitem[Jones, 2000]{Jones00}
+\ppgccbibauthordoformat{Jones, M.~P.} (\ppgccyeardoformat{2000}).
+\newblock \ppgccbibtitledoformat{{Type Classes with Functional Dependencies}}.
+\newblock \ppgccbibjournaldoformat{Proceedings of the 9th European Symposium on
+  Programming Languages and Systems}, (March).
+
+\bibitem[Jones \ppgccciteauthorand{} Diatchki, 2008]{Jones08}
+\ppgccbibauthordoformat{Jones, M.~P. \ppgccbibauthorand{} Diatchki, I.~S.}
+  (\ppgccyeardoformat{2008}).
+\newblock \ppgccbibtitledoformat{Language and program design for functional
+  dependencies}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{Haskell '08:
+  Proceedings of the first ACM SIGPLAN symposium on Haskell},
+  \ppgccbibpagesstring{}
+  \ppgccpagedoformat{87}-\ppgccpagedoformat{}-\ppgccpagedoformat{98}, New York,
+  NY, USA. ACM.
+
+\bibitem[Jones \ppgccciteauthorand{} Diatchki, 2009]{Jones09}
+\ppgccbibauthordoformat{Jones, M.~P. \ppgccbibauthorand{} Diatchki, I.~S.}
+  (\ppgccyeardoformat{2009}).
+\newblock \ppgccbibtitledoformat{{Language and program design for functional
+  dependencies}}.
+\newblock \ppgccbibjournaldoformat{ACM SIGPLAN Notices},
+  44(2):\ppgccpagedoformat{87}.
+
+\bibitem[Jones et~al.\@, 1997]{Jones97Type}
+\ppgccbibauthordoformat{Jones, S.\ppgccbibauthorsep{} Jones,
+  M.\ppgccbibauthorlastsep{} \ppgccbibauthorand{} Meijer, E.}
+  (\ppgccyeardoformat{1997}).
+\newblock \ppgccbibtitledoformat{Type classes: an exploration of the design
+  space}.
+
+\bibitem[Jones, 2002]{Haskell98}
+Jones, S.~P., \ppgccbibeditorstring{} (\ppgccyeardoformat{2002}).
+\newblock \ppgccbibbtitledoformat{Haskell 98 Language and Libraries: The
+  Revised Report}.
+\newblock http://haskell.org/.
+
+\bibitem[Milner, 1978]{Milner79}
+\ppgccbibauthordoformat{Milner, R.} (\ppgccyeardoformat{1978}).
+\newblock \ppgccbibtitledoformat{{A Theory of Type Polymorphism in
+  Programming}}.
+\newblock \ppgccbibjournaldoformat{Journal of Computer and System Sciences},
+  (17):\ppgccpagedoformat{348}-\ppgccpagedoformat{}-\ppgccpagedoformat{375}.
+
+\bibitem[Mitchell, 1996]{Mitchell96}
+\ppgccbibauthordoformat{Mitchell, J.~C.} (\ppgccyeardoformat{1996}).
+\newblock \ppgccbibbtitledoformat{Foundations of programming languages}.
+\newblock MIT Press, Cambridge, MA, USA.
+
+\bibitem[Peyton~Jones et~al.\@, 2006]{Jones06}
+\ppgccbibauthordoformat{Peyton~Jones, S.\ppgccbibauthorsep{} Vytiniotis,
+  D.\ppgccbibauthorsep{} Weirich, S.\ppgccbibauthorlastsep{}
+  \ppgccbibauthorand{} Washburn, G.} (\ppgccyeardoformat{2006}).
+\newblock \ppgccbibtitledoformat{Simple unification-based type inference for
+  gadts}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{ICFP '06: Proceedings
+  of the eleventh ACM SIGPLAN international conference on Functional
+  programming}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{50}-\ppgccpagedoformat{}-\ppgccpagedoformat{61}, New York,
+  NY, USA. ACM.
+
+\bibitem[{S.~P.~Jones and others}, 1998]{GHC}
+\ppgccbibauthordoformat{{S.~P.~Jones and others}} (\ppgccyeardoformat{1998}).
+\newblock \ppgccbibtitledoformat{{GHC --- The Glasgow Haskell Compiler
+  website}}.
+\newblock http://www.haskell.org/ghc/.
+
+\bibitem[Schrijvers et~al.\@, 2008]{Schrijvers2008}
+\ppgccbibauthordoformat{Schrijvers, T.\ppgccbibauthorsep{} Jones,
+  P.\ppgccbibauthorlastsep{} \ppgccbibauthorand{} Others}
+  (\ppgccyeardoformat{2008}).
+\newblock \ppgccbibtitledoformat{{Type checking with open type functions}}.
+\newblock \ppgccbibjournaldoformat{ACM SIGPLAN Notices}, 43(9).
+
+\bibitem[Strachey, 2000]{Strachey00}
+\ppgccbibauthordoformat{Strachey, C.} (\ppgccyeardoformat{2000}).
+\newblock \ppgccbibtitledoformat{{Fundamental Concepts in Programming
+  Languages}}.
+\newblock \ppgccbibjournaldoformat{High-Order and Symbolic Computation},
+  13(1-2):\ppgccpagedoformat{11}-\ppgccpagedoformat{}-\ppgccpagedoformat{49}.
+
+\bibitem[Sulzmann et~al.\@, 2007]{Sulzmann07}
+\ppgccbibauthordoformat{Sulzmann, M.\ppgccbibauthorsep{} Chakravarty, M.
+  M.~T.\ppgccbibauthorsep{} Jones, S.~P.\ppgccbibauthorlastsep{}
+  \ppgccbibauthorand{} Donnelly, K.} (\ppgccyeardoformat{2007}).
+\newblock \ppgccbibtitledoformat{System f with type equality coercions}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{TLDI '07: Proceedings
+  of the 2007 ACM SIGPLAN international workshop on Types in languages design
+  and implementation}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{53}-\ppgccpagedoformat{}-\ppgccpagedoformat{66}, New York,
+  NY, USA. ACM.
+
+\bibitem[Sulzmann et~al.\@, 2006a]{Sulzmann06a}
+\ppgccbibauthordoformat{Sulzmann, M.\ppgccbibauthorsep{} Duck,
+  G.\ppgccbibauthorsep{} Peyton-Jones, S.\ppgccbibauthorlastsep{}
+  \ppgccbibauthorand{} Stuckey, P.} (\ppgccyeardoformat{2006a}).
+\newblock \ppgccbibtitledoformat{{Understanding functional dependencies via
+  constraint handling rules}}.
+
+\bibitem[Sulzmann et~al.\@, 2006b]{Sulzmann06c}
+\ppgccbibauthordoformat{Sulzmann, M.\ppgccbibauthorsep{} Schrijvers,
+  T.\ppgccbibauthorlastsep{} \ppgccbibauthorand{} Stuckey, P.~J.}
+  (\ppgccyeardoformat{2006b}).
+\newblock \ppgccbibtitledoformat{Principal type inference for ghcstyle
+  multi-parameter type classes}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{In Proc. of APLAS'06}.
+
+\bibitem[Sulzmann et~al.\@, 2006c]{Sulzmann06b}
+\ppgccbibauthordoformat{Sulzmann, M.\ppgccbibauthorsep{} Wazny,
+  J.\ppgccbibauthorlastsep{} \ppgccbibauthorand{} Stuckey, P.~J.}
+  (\ppgccyeardoformat{2006c}).
+\newblock \ppgccbibtitledoformat{A framework for extended algebraic data
+  types}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{In Proc. of FLOPS'06,
+  volume 3945 of LNCS}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{47}-\ppgccpagedoformat{}-\ppgccpagedoformat{64}.
+  Springer-Verlag.
+
+\bibitem[Volpano, 1994]{Volpano94}
+\ppgccbibauthordoformat{Volpano, D.~M.} (\ppgccyeardoformat{1994}).
+\newblock \ppgccbibtitledoformat{Haskell-style overloading is np-hard}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{In Proceedings of the
+  1994 International Conference on Computer Languages}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{88}-\ppgccpagedoformat{}-\ppgccpagedoformat{94}.
+
+\bibitem[Volpano \ppgccciteauthorand{} Smith, 1991]{Volpano91}
+\ppgccbibauthordoformat{Volpano, D.~M. \ppgccbibauthorand{} Smith, G.}
+  (\ppgccyeardoformat{1991}).
+\newblock \ppgccbibtitledoformat{On the complexity of ml typability with
+  overloading}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{Proceedings of the 5th
+  ACM Conference on Functional Programming Languages and Computer
+  Architecture}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{15}-\ppgccpagedoformat{}-\ppgccpagedoformat{28}, London,
+  UK. Springer-Verlag.
+
+\bibitem[Wadler \ppgccciteauthorand{} Blott, 1989]{Wadler89}
+\ppgccbibauthordoformat{Wadler, P. \ppgccbibauthorand{} Blott, S.}
+  (\ppgccyeardoformat{1989}).
+\newblock \ppgccbibtitledoformat{{How to make ad-hoc polymorphism less ad
+  hoc}}.
+\newblock \ppgccbibjournaldoformat{Proceedings of the 16th ACM SIGPLAN-SIGACT
+  symposium on Principles of programming languages}, \ppgccbibpagesstring{}
+  \ppgccpagedoformat{60}-\ppgccpagedoformat{}-\ppgccpagedoformat{76}.
+
+\bibitem[Watt, 1990]{Watt90}
+\ppgccbibauthordoformat{Watt, D.~A.} (\ppgccyeardoformat{1990}).
+\newblock \ppgccbibbtitledoformat{Programming language concepts and paradigms}.
+\newblock Prentice-Hall, Inc., Upper Saddle River, NJ, USA.
+
+\bibitem[Wells, 2002]{Wells02}
+\ppgccbibauthordoformat{Wells, J.~B.} (\ppgccyeardoformat{2002}).
+\newblock \ppgccbibtitledoformat{The essence of principal typings}.
+\newblock \ppgccbibinstring{} \ppgccbibbooktitledoformat{In Proc. 29th Int'l
+  Coll. Automata, Languages, and Programming, volume 2380 of LNCS},
+  \ppgccbibpagesstring{}
+  \ppgccpagedoformat{913}-\ppgccpagedoformat{}-\ppgccpagedoformat{925}.
+  Springer-Verlag.
+
+\bibitem[{Wolfgang Jeltsch}, 1998]{MailFunDeps}
+\ppgccbibauthordoformat{{Wolfgang Jeltsch}} (\ppgccyeardoformat{1998}).
+\newblock \ppgccbibtitledoformat{{Mensagem Enviada para a lista GHC users.}}
+\newblock
+  http://www.haskell.org/pipermail/glasgow-haskell-users/2008-September/015562%
+.html.
+
+\end{thebibliography}

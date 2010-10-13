@@ -1,0 +1,187 @@
+\newtheorem{Lemma}{Lemma}
+\newtheorem{Theorem}{Theorem}
+\newtheorem{Definition}{Definition}
+\newtheorem{Corollary}{Corollary}
+\newtheorem{Example}{Example}
+
+\newcommand{\bfill}{{\parindent 0pt \hrulefill }}
+\newcommand{\ffill}{{\parindent 0pt \hrulefill {\sc {\footnotesize End of example}}}}
+
+\newcommand{\dom}{\ensuremath {\mathit{dom\/}}}
+\newcommand{\unifset}{\ensuremath {\mathit{unifset\/}}}
+\newcommand{\unify}{\ensuremath {\mathit{unify\/}}}
+\newcommand{\match}{\ensuremath {\mathit{match\/}}}
+\newcommand{\matchset}{\ensuremath {\mathit{matchset\/}}}
+\newcommand{\cls}{\ensuremath {\text{\tt cls}}}
+\newcommand{\ins}{\ensuremath {\text{\tt ins}}}
+\newcommand{\lambdalet}{\ensuremath {\text{\tt ll}}}
+\newcommand{\ssat}{\ensuremath {\text{\tt sat}}}
+
+
+\newcommand{\oover}[1]{\ensuremath {\overline{#1}}}
+\newcommand{\wellformed}[1]{\ensuremath {\text{\it wf\/}(#1)}}
+\newcommand{\wf}{\ensuremath {\text{\it wf\/}}}
+\newcommand{\lb}{\ensuremath {\text{\it lb\/}}}
+\newcommand{\st}{\ensuremath {\text{\it st\/}}}
+
+\newcommand{\tv}{\ensuremath {\text{\it tv\/}}}
+
+\newcommand{\Right}{\ensuremath{\text{\it Right\/}}}
+\newcommand{\Left}{\ensuremath{\text{\it Left\/}}}
+
+\newcommand{\Unsat}{\ensuremath{\text{\it Unsat\/}}}
+\newcommand{\Single}{\ensuremath{\text{\it Single\/}}}
+\newcommand{\Ambiguous}{\ensuremath{\text{\it Ambiguous\/}}}
+
+\newcommand{\outermost}{\ensuremath \Theta}
+
+\newcommand{\prog}[1]{
+  \normalfont\ttfamily 
+    \hspace*{2cm}
+    \fbox{\parbox{.5\textwidth}{\begin{tabbing}
+        #1
+     \end{tabbing}}}
+  \normalfont}
+
+\newcommand{\progb}[1]{
+  \normalfont\ttfamily 
+   \hspace*{.5cm}
+    \fbox{\parbox{.8\textwidth}{\begin{tabbing}
+        #1
+     \end{tabbing}}}
+  \normalfont}
+
+\newcommand{\progc}[1]{{\parindent 0pt 
+  \normalfont\ttfamily 
+   \hspace*{.2cm}
+    \fbox{\parbox{.9\textwidth}{\begin{tabbing}
+        #1
+     \end{tabbing}}}
+  \normalfont}}
+
+\newcommand{\progd}[1]{{\parindent 0pt 
+  \normalfont\ttfamily 
+   \hspace*{.2cm}
+    \fbox{\parbox[t]{.9\textwidth}{\begin{tabbing}
+        #1
+     \end{tabbing}}}
+  \normalfont}}
+
+\newcommand{\CT}{{\tt CT}}
+\newcommand{\CTo}{$\mathtt{CT_\circ}$}
+\newcommand{\CTa}{$\mathtt{CT_a}$}
+\newcommand{\CTA}{$\mathit{CTA\/}$}
+
+\newcommand{\mif}{{\bf if}\ }
+\newcommand{\mthen}{\ {\bf then}\ }
+\newcommand{\melse}{\ {\bf else}\ }
+\newcommand{\mlet}{{\bf let}\ }
+\newcommand{\mmin}{\ {\bf in}\ }
+\newcommand{\mwhere}{{\bf where}\ }
+\newcommand{\mcase}{{\bf case}\ }
+\newcommand{\mof}{{\bf of}\ }
+
+%--- regras do sistema de tipos
+\newcommand{\VARo}{$\texttt{\small VAR}_{\rm o}$}
+\newcommand{\LETo}{$\texttt{\small LET}_{\rm o}$}
+\newcommand{\APPLo}{$\texttt{\small APPL}_{\rm o}$}
+\newcommand{\ABSo}{$\texttt{\small ABS}_{\rm o}$}
+\newcommand{\LETOo}{$\texttt{\small LETO}_{\rm o}$}
+
+%--- regras do sistema de inferência de tipos
+\newcommand{\VAR} {\text{\small{\tt{VAR}}}}
+\newcommand{\LET} {\text{\small{\tt{LET}}}}
+\newcommand{\APP}{\text{\small{\tt{APP}}}}
+\newcommand{\ABS}{\text{\small{\tt{ABS}}}}
+\newcommand{\LETO}{\text{\small{\tt{LETO}}}}
+
+%--- regras do sistema de tipos com open world assumptions
+\newcommand{\VARol}{$\textrm{\small VAR}_{\rm o}'$}
+\newcommand{\LETol}{$\textrm{\small LET}_{\rm o}'$}
+\newcommand{\APPLl}{$\textrm{\small APPL}_{\rm o}'$}
+\newcommand{\ABSl}{$\textrm{\small ABS}_{\rm o}'$}
+\newcommand{\LETOl}{$\textrm{\small LETO}_{\rm o}'$}
+
+%--- regras do sistema de tipos com local overloading
+\newcommand{\VARoo}{$\texttt{\small VAR}_\bullet$}
+\newcommand{\LEToo}{$\texttt{\small LET}_\bullet$}
+\newcommand{\ABSoo}{$\texttt{\small ABS}_\bullet$}
+\newcommand{\APPLoo}{$\texttt{\small APPL}_\bullet$}
+\newcommand{\GENoo}{$\texttt{\small GEN}_\bullet$}
+
+%--- regras do sistema de inferência de tipos com local overloading
+\newcommand{\VVAR}{{\small{\sf{VAR}}}}
+\newcommand{\LLET}{{\small{\sf{LET}}}}
+\newcommand{\AAPPL}{{\small{\sc{APPL}}}}
+\newcommand{\AABS}{{\small{\sc{ABS}}}}
+
+%--- simbolos auxiliares ------
+\newcommand{\rrightarrow}{:\rightarrow}
+\newcommand{\Ddelta}{\ensuremath{{\!{\scriptscriptstyle \Delta}}}}
+\newcommand{\clo}{\arrowvert^{\ast}}
+\newcommand{\res}{\arrowvert}
+\newcommand{\virg}{\,\fbox{$\mathbf{\!,\!}$}\,}
+
+%------ semantica -----
+\newcommand{\x }{[\![}
+\newcommand{\y }{]\!]}
+\newcommand{\sm}[1]{\textbf{\footnotesize #1}}
+\newcommand{\sem}[1]{\textbf{\small #1}}
+\newcommand{\trad}{\leadsto}
+\newcommand{\tradD}{\leadsto}
+\newcommand{\DM}{\ensuremath{{\scriptscriptstyle \mathrm{DM}}}}
+
+\newcommand{\simplify}{\gg}
+\newcommand{\ssimplify}{\mathit{simplify\/}}
+\newcommand{\sat}{\mathit{sat\/}}
+
+\newcommand{\vdasho}{\mathtt{\vdash_\circ\,}}
+\newcommand{\vdasha}{\mathtt{\vdash_a}}
+
+\newcommand{\tvu}{\ensuremath{tv_{\mathrm u}}}
+
+\newcommand{\ciu}{$\texttt{\small ci0}$}
+\newcommand{\cizl}{$\textrm{\small ci0}'$}
+\newcommand{\ciul}{$\textrm{\small ci0}'$}
+\newcommand{\cidl}{$\textrm{\small ci1}'$}
+
+\newcommand{\sato}{$\texttt{\small sat0}$}
+\newcommand{\satu}{$\texttt{\small sat1}$}
+\newcommand{\satd}{$\texttt{\small sat2}$}
+\newcommand{\satt}{$\texttt{\small sat3}$}
+\newcommand{\satq}{$\texttt{\small sat4}$}
+
+\newcommand{\clcg}{\ensuremath{\mathit{clcg\/}}}
+\newcommand{\lcg}{\ensuremath{\mathit{lcg\/}}}
+\newcommand{\satset}{\ensuremath{\mathit{satset\/}}}
+\newcommand{\gen}{\ensuremath{\mathit{gen\/}}}
+\newcommand{\ginst}{\ensuremath{\mathit{inst_0\/}}}
+\newcommand{\ainst}{\ensuremath{\mathit{inst\/}}}
+\newcommand{\fresh}{\ensuremath{\mathit{fresh\/}}}
+
+\newcommand{\CSSAT}{CS-SAT}
+\newcommand{\Sol}{\ensuremath{\circledS}}
+
+\newcommand{\constrained}{\ensuremath{\{\ldots\}}}
+
+\newcommand{\smodels}{\ensuremath{\models_{\texttt{so}}}}
+\newcommand{\gmodels}{\ensuremath{\models_{\texttt{go}}}}
+
+\newcommand{\ct}{\ensuremath{\rho_{{\mathtt{ct}}}}}
+\newcommand{\vpo}{\ensuremath{\rho_{{\mathtt{v}}}}}
+\newcommand{\oc}{\ensuremath{\rho_{{\mathtt{oc}}}}}
+\newcommand{\ci}{\ensuremath{\rho_{{\mathtt{ci}}}}}
+\newcommand{\h}{\ensuremath{\rho_{\,\!\mathtt{h}}}}
+\newcommand{\globalovp}[1]{\ensuremath{{\mathit{global\/}(#1)}}}
+
+\newcommand{\D}[1]{\ensuremath{\:D_{#1}\:}}
+\newcommand{\DC}[1]{\ensuremath{\:\mathbb{D}_{#1}\:}}
+\newcommand{\decr}[1]{\ensuremath{\triangleright_{#1}}}
+\newcommand{\ranku}[1]{\ensuremath{\mathit{rank\/}_1({#1})\:}}
+
+\newcommand{\Gammaigual}{\ensuremath{\Gamma_{\!\texttt{(==)}}}}
+\newcommand{\Gammaeq}{\ensuremath{\Gamma_{\text{\tt{eq}}}}}
+\newcommand{\Gammaf}{\ensuremath{\Gamma_{\text{\tt{f}}}}}
+\newcommand{\Gammains}{\ensuremath{\Gamma_{\!\!\text{\it{ins\/}}}}}
+
+\newcommand{\modelsco}[1]{\models^{\hspace*{-.25cm}{*}\:#1}}

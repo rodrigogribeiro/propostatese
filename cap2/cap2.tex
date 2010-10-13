@@ -1,0 +1,228 @@
+\chapter{A Linguagem Haskell}\label{capintrohaskell}
+
+Este cap\'itulo apresenta uma breve introdu\c{c}\~ao \`a linguagem Haskell.
+Leitores fa\-mi\-li\-a\-ri\-za\-dos com esta linguagem podem continuar a leitura a partir do Cap\'itulo 4.
+
+\noindent\rule{15.5cm}{0.2mm}
+
+``Haskell \'e uma linguagem de prop\'osito geral, puramente funcional, que
+incorpora muitas inova\c{c}\~oes recentes em seu projeto. Haskell prov\^e
+fun\c{c}\~oes de alta ordem, sem\^antica n\~ao-estrita, sistema de tipos
+polim\'orfico com infer\^encia e verifica\c{c}\~ao est\'atica, tipos de dados
+alg\'ebricos definidos pelo usu\'ario, casamento de padr\~oes, sintaxe especial
+para listas, um sistema de m\'odulos, um sistema de E$\slash$S mon\'adico e um
+rico conjunto de tipos de dados primitivos, incluindo listas, arranjos, inteiros de 
+precis\~ao fixa e arbitr\'aria e n\'umeros de ponto flutuante. Haskell \'e o
+\'apice da solidifica\c{c}\~ao de v\'arios anos de pesquisa em linguagens
+funcionais n\~ao-estritas'' (Defini\c{c}\~ao da Linguagem Haskell \cite{Haskell98}).
+
+Para a apresenta\c{c}\~ao de diversas caracter\'isticas da linguagem, considere
+o trecho de programa mostrado na Figura \ref{fig2}.
+
+\section{M\'odulos}
+
+Programas em Haskell s\~ao compostos por um conjunto de \textit{m\'odulos}.
+M\'odulos prov\^eem uma forma para o programador re-utilizar c\'odigo e
+controlar o espa\c{c}o de nomes em programas. Cada m\'odulo \'e composto
+por um conjunto de \emph{declara\c{c}\~oes}, que podem ser: declara\c{c}\~oes de
+classes, inst\^ancias, tipos de dados, sin\^onimos de tipos, valores e
+fun\c{c}\~oes. A Figura \ref{fig2} mostra um trecho de c\'odigo
+de um m\'odulo chamado \texttt{Table} que implementa opera\c{c}\~oes em uma tabela representada por
+uma lista de pares chave-valor. Este m\'odulo define a constante
+\texttt{empty} e as fun\c{c}\~oes \texttt{insert},
+\texttt{member}, \texttt{search}, \texttt{remove} e \texttt{update} 
+para manipula\c{c}\~ao de tabelas.
+
+\begin{figure}
+   \begin{verbatim}module Table where\end{verbatim}
+   \begin{verbatim}
+
+type Table a = [(String, a)]
+
+empty :: Table a
+empty = []
+   \end{verbatim}
+   \texttt{insert :: String} $\rightarrow$ \texttt{a} $\rightarrow$ \texttt{Table a} $\rightarrow$\texttt{ Table a}   
+   \begin{verbatim}
+insert s a t 
+         | member s t = t
+         | otherwise = (s, a) : t
+   \end{verbatim}
+   \texttt{member :: String $\rightarrow$ Table a $\rightarrow$ Bool}\\
+   \texttt{member s t = not \$ null [p | p $\leftarrow$ t, fst p /= s]}
+   \begin{verbatim}\end{verbatim}
+   \texttt{search :: String $\rightarrow$ Table a $\rightarrow$ a}\\
+   \texttt{search s t = snd (head [p | p $\leftarrow$ t, fst p == s])}
+   \begin{verbatim}\end{verbatim}
+   \texttt{update :: String $\rightarrow$ a $\rightarrow$ Table a $\rightarrow$ Table a}
+   \begin{verbatim} 
+update s a [] = error "Item not found!"
+update s a (x:xs)  
+              | s == (fst x) = (s, a) : xs
+              | otherwise = update s a xs
+   \end{verbatim}
+   \texttt{remove :: String $\rightarrow$ Table a $\rightarrow$ (a, Table a)}
+   \begin{verbatim}
+remove s [] = error "Item not found!"
+remove s (x:xs)
+            | s == (fst x) = (snd x, xs)
+            | otherwise = remove s xs   
+   \end{verbatim}
+   \caption{Um M\'odulo em Haskell}
+   \label{fig2}
+\end{figure}
+
+\section{Anota\c{c}\~oes de Tipo}
+
+No m\'odulo \texttt{Table}, cada defini\c{c}\~ao \'e precedida por uma cor\-res\-pon\-den\-te 
+\emph{anota\c{c}\~ao de tipo}. 
+
+Todos os s\'imbolos definidos no m\'odulo
+\texttt{Table} s\~ao \emph{polim\'orficos}. Por exemplo, a constante
+\texttt{emptyTable}, possui o tipo \texttt{Table a}, que corresponde a um
+sin\^onimo para o tipo \texttt{[(String, a)]}, que indica que este s\'imbolo
+pode assumir diferentes tipos de acordo com o valor da \emph{vari\'avel de tipo}
+\texttt{a}; caso \texttt{a} tenha o valor \texttt{Int}, este tipo ser\'a o tipo monom\'orfico \texttt{[(String, Int)]}; 
+se \texttt{a} tiver o valor \texttt{Bool}, ent\~ao este tipo ser\'a o tipo monom\'orfico 
+\texttt{[(String, Bool)]}; se \texttt{a} tiver o valor \texttt{[b]}, este ser\'a o tipo polim\'orfico 
+\texttt{[(String, [b])]} etc.
+
+
+Tipos funcionais especificam os tipos do par\^ametro e do resultado de uma
+fun\c{c}\~ao (os quais podem tamb\'em ser tipos funcionais). O s\'imbolo \texttt{search} possui a 
+seguinte anota\c{c}\~ao de tipo: \texttt{String $\rightarrow$ Table a $\rightarrow$ a}, que especifica que esta 
+fun\c{c}\~ao recebe como par\^ametro um valor do tipo \texttt{String} e uma lista de pares
+compostos por uma \texttt{String} e um elemento de um tipo qualquer e retorna como resultado um elemento 
+deste tipo. Em geral \'e como dizer, informalmente, que \texttt{search} recebe dois par\^ametros (um de cada ``vez''),
+um valor de tipo \texttt{String} e uma lista de pares.
+
+Cabe ressaltar que, com poucas exce\c{c}\~oes, anota\c{c}\~oes de tipos s\~ao
+opcionais em programas Haskell, uma vez que o compilador \'e capaz de inferir
+o tipo principal para cada express\~ao. Este processo de determinar o
+tipo principal para uma express\~oes \'e chamado de \emph{infer\^encia de
+tipo}. Caso o programador forne\c{c}a uma anota\c{c}\~ao de tipo para uma express\~ao, 
+o compilador verifica se a anota\c{c}\~ao especificada pode
+ter o tipo anotado. Este processo de verifica\c{c}\~ao \'e chamado de
+\emph{verifica\c{c}\~ao de tipo}.
+
+\section{Sintaxe de Listas}
+
+
+Listas s\~ao estruturas de dados usadas comumente para modelar diversos
+problemas. Por isto, existe em Haskell uma sintaxe especial para representar este tipo de dados. 
+O tipo de dados \texttt{[a]} pode ser definido indutivamente como a uni\~ao disjunta de uma lista vazia, 
+representada por \texttt{[]}, com o conjunto de valores \texttt{x : xs} contendo um primeiro 
+elemento \texttt{x} de tipo \texttt{a}, seguido de uma lista \texttt{xs}. Os s\'imbolos \texttt{[]}
+e \texttt{:} s\~ao \emph{construtores de valores} do tipo lista, cujos tipos s\~ao
+respectivamente \texttt{[a]} e \texttt{a $\rightarrow$ [a] $\rightarrow$ [a]}. O uso de \texttt{[a]} (em vez de
+\texttt{List a}) \'e uma primeira forma de sintaxe especial para (tipos de) listas. O uso dos construtores \texttt{[]}
+e \texttt{(:)}, sendo o segundo usado de forma infixada, \'e outra nota\c{c}\~ao especial para a constru\c{c}\~ao de 
+listas.
+
+Uma outra forma de sintaxe especial para listas \'e mostrada a seguir:
+\begin{verbatim} 
+l = [True, False] 
+\end{verbatim}
+corresponde a uma abrevia\c{c}\~ao para
+\begin{verbatim} 
+l = True : (False : []). 
+\end{verbatim}
+
+No m\'odulo \texttt{Table}, a fun\c{c}\~ao \texttt{member} usa outro tipo de
+sintaxe especial para listas, que \'e baseada em nota\c{c}\~ao comumente usada para defini\c{c}\~ao de conjuntos.
+Esta fun\c{c}\~ao poderia ser definida usando nota\c{c}\~ao de conjuntos como:
+\begin{flushleft}
+   member s t = $\{$ \emph{p} $|$ \emph{p} $\in$ t $\land$ (fst p) $=$ s\} $\neq \emptyset$\\   
+\end{flushleft}
+
+O \'ultimo tipo de \emph{a\c{c}\'ucar sint\'atico} dispon\'ivel na linguagem
+Haskell para listas \'e utilizado para facilitar a defini\c{c}\~ao de
+seq\"u\^encias aritm\'eticas:
+
+\begin{itemize}
+   \item{\texttt {['a'..'z']} : lista de todas as letras min\'usculas do
+   alfabeto.}
+   \item{\texttt {[0, 2..]}: lista de n\'umeros naturais pares.}
+   \item{\texttt{[0..]}: lista de todos os n\'umeros naturais.}
+\end{itemize}
+
+
+\section{Casamento de Padr\~oes}
+
+
+O \textit{casamento de padr\~oes} desempenha um papel fundamental nas defini\c{c}\~oes de
+fun\c{c}\~oes em linguagens funcionais modernas, por meio de equa\c{c}\~oes. A
+fun\c{c}\~ao \texttt{re\-mo\-ve}, definida no m\'odulo \texttt{Table},
+\'e um exemplo de defini\c{c}\~ao que utiliza casamento de padr\~ao sobre
+listas. A defini\c{c}\~ao desta fun\c{c}\~ao \'e composta por duas
+equa\c{c}\~oes alternativas, cada uma especificando o resultado correspondente ao padr\~ao da lista recebida como
+argumento: a primeira equa\c{c}\~ao o padr\~ao \texttt{[]}, e a segunda equa\c{c}\~ao utiliza o padr\~ao
+\texttt{(x:xs)}.
+
+
+\begin{flushleft}
+   {\Large \textbf{Guardas}}
+\end{flushleft}
+
+A defini\c{c}\~ao da fun\c{c}\~ao \texttt{insert} \'e um exemplo de
+defini\c{c}\~ao que utiliza \emph{defini\c{c}\~oes com guardas}, que permitem a
+defini\c{c}\~ao de alternativas para uma mesma equa\c{c}\~ao. A alternativa a
+ser executada \'e a primeira, na ordem textual, para qual a guarda (express\~ao booleana) 
+especificada na defini\c{c}\~ao resulta valor verdadeiro.
+
+
+\section{Tipos de Dados Alg\'ebricos}
+
+A seguir, nas Figuras \ref{fig3} e \ref{fig4} s\~ao mostradas declara\c{c}\~oes
+de um tipo de dados alg\'ebrico e de uma fun\c{c}\~ao que recebe valores deste tipo como
+argumento, com o objetivo de ilustrar caracter\'isticas b\'asicas da defini\c{c}\~ao e 
+uso de valores de tipos de dados alg\'ebricos em Haskell.
+\begin{figure}[h]
+\begin{flushleft}
+  \texttt{data Maybe a = Nothing | Just a}\\
+  \texttt{mapMaybe :: (a $\rightarrow$ b) $\rightarrow$ Maybe a $\rightarrow$ Maybe b}\\
+  \texttt{mapMaybe f (Just x) = Just (f x)}\\
+  \texttt{mapMaybe f Nothing = Nothing}\\
+\end{flushleft}
+  \caption{Defini\c{c}\~ao de um tipo de dados alg\'ebrico e uma fun\c{c}\~ao que o
+  utiliza.}
+  \label{fig3}
+\end{figure}
+
+A primeira linha ilustra a defini\c{c}\~ao de um tipo alg\'ebrico: apalavra reservada \texttt{data} 
+declara \texttt{Maybe} como sendo um novo 
+\emph{construtor de tipos} que possui dois \emph{construtores de dados}: \texttt{Nothing} 
+e \texttt{Just}. O tipo \texttt{Maybe a} \'e polim\'orfico, ou seja, quantificado universalmente sobre a vari\'avel de
+tipo \texttt{a}: para cada tipo \texttt{t} atribu\'ido \`a vari\'avel de tipo
+\texttt{a}, o construtor de tipos \texttt{Maybe} define um novo tipo de dados, \texttt{Maybe t}. 
+Os valores de um tipo \texttt{Maybe t} 
+podem ter duas formas: \texttt{Nothing} ou \texttt{(Just x)}, onde \texttt{x} corresponde 
+a um valor do tipo \texttt{t}. Construtores de dados podem ser utilizados em
+padr\~oes para decompor valores do tipo \texttt{Maybe} ou em express\~oes para
+construir valores deste tipo. Ambos os casos est\~ao ilustrados na
+defini\c{c}\~ao de \texttt{mapMaybe}.
+
+Tipos de dados alg\'ebricos em Haskell constituem uma \emph{soma de produtos}.
+A defini\c{c}\~ao do tipo de dados \texttt{Tree a} \'e uma folha (\texttt{Leaf})
+que corresponde a um produto trivial contendo somente um tipo, e um nodo (\texttt{Node}), que corresponde a
+um produto contendo um elemento do tipo \texttt{a} e dois elementos de tipo \texttt{Tree a} (sub-\'arvores esquerda 
+e direita). 
+O tipo de dados \texttt{Tree a} corresponde \'a soma de dois produtos, um correspondente ao 
+construtor de dados \texttt{Leaf} e outro ao construtor \texttt{Node}.
+\begin{figure}[h]
+  \begin{flushleft}
+     \texttt{data Tree a = Leaf a | Node a (Tree a) (Tree a)}
+  \end{flushleft}
+  \caption{Tipo de dados alg\'ebrico.}
+  \label{fig4}
+\end{figure}
+
+\section{Conclus\~ao} 
+
+Este cap\'itulo apresentou uma introdu\c{c}\~ao \`a linguagem Haskell e suas
+principais caracter\'isticas: sistema de m\'odulos, anota\c{c}\~oes de tipos,
+a\c{c}\'ucar sint\'atico para listas, casamento de padr\~oes e defini\c{c}\~oes
+de tipos de dados alg\'ebricos. Para cada uma destas caracter\'isticas foram apresentados
+exemplos ilustrativos de sua utiliza\c{c}\~ao. O pr\'oximo cap\'itulo abordar\'a
+outro recurso importante de Haskell --- a possibilidade de definir s\'imbolos
+sobrecarregados.

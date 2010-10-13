@@ -1,0 +1,11 @@
+\newcommand{\llet}{{\tt {\small let}}}
+\newcommand{\leto}{{\tt {\small leto}}}
+\newcommand{\iin}{{\tt {\small in}}}
+
+\newcommand{\iif}{{\tt {\small if}}}
+\newcommand{\tthen}{{\tt {\small then}}}
+\newcommand{\eelse}{{\tt {\small else}}}
+\newcommand{\wwhere}{{\tt {\small where}}}
+
+\newcommand{\class}{\ensuremath {\text{\tt {\small class}}}}
+\newcommand{\instance}{\ensuremath {\text{\tt {\small instance}}}}

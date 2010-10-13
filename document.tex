@@ -1,0 +1,46 @@
+\documentclass[phd, project]{ppgccufmg} 
+\usepackage[brazil]{babel}    
+\usepackage[T1]{fontenc}      
+\usepackage[latin1]{inputenc}  
+\usepackage{graphicx}   
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{bussproofs}
+\usepackage{path}
+\usepackage{tikz}
+\usetikzlibrary{calc,through,backgrounds}
+\usepackage{pgf}
+\usepackage[a4paper, portuguese, bookmarks=true, bookmarksnumbered=true,
+            linktocpage, colorlinks=true,citecolor=black, urlcolor=red,
+            linkcolor=black, filecolor=black,]{hyperref}
+                                
+
+\begin{document}
+    \input{lambda.keys}
+    \input{meta.keys} 
+	\ppgccufmg{
+		title = {Optional Multi-Parameter Type Classes in Haskell}, 
+		portuguesetitle = {Classes de Tipos Opcionais e Com V\'arios Par\^ametros em Haskell}, 
+		authorrev = {Ribeiro, Rodrigo Geraldo}, 
+        course = {Computer Science}, 
+        portuguesecourse = {Ci\^encia da Computa\c{c}\~ao},
+        university = {Federal University of Minas Gerais},
+        portugueseuniversity = {Universidade Federal de Minas Gerais}, 
+        address = {Belo Horizonte - MG}, 
+        abstract={Resumo}{resumo},
+        abstract=[english]{Abstract}{abstract},
+        date = {2010-8},
+		advisor = {Carlos Camar\~ao de Figueiredo}, 
+		epigraphtext={Voc\^e acha que uma vida como essa, com tal objetivo, seria
+		              \'ardua demais, despida de coisas agrad\'aveis? Ent\~ao n\~ao
+		               aprendeu ainda que n\~ao h\'a mel mais doce que o do
+		              conhecimento.}{Friedrich Nietzsche - Fil\'osofo Alem\~ao},
+	 }
+	\input{cap1/cap1.tex}
+	\input{cap2/cap2.tex}
+	\input{cap3/cap3.tex}
+	\input{cap4/cap4.tex}
+	\input{plan/plan.tex}
+	\ppgccbibliography{document}
+\end{document}

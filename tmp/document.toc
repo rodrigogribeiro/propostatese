@@ -1,0 +1,12 @@
+\select@language {brazil}
+\contentsline {chapter}{Lista de Figuras}{vii}
+\contentsline {chapter}{Lista de Tabelas}{ix}
+\contentsline {chapter}{\chapternumberline {1}Introdu\c {c}\~ao}{1}
+\contentsline {chapter}{\chapternumberline {2}A Linguagem Haskell}{3}
+\contentsline {section}{\numberline {2.1}M\'odulos}{3}
+\contentsline {section}{\numberline {2.2}Anota\c {c}\~oes de Tipo}{4}
+\contentsline {section}{\numberline {2.3}Sintaxe de Listas}{6}
+\contentsline {section}{\numberline {2.4}Casamento de Padr\~oes}{6}
+\contentsline {section}{\numberline {2.5}Tipos de Dados}{7}
+\contentsline {section}{\numberline {2.6}Conclus\~ao}{9}
+\contentsline {chapter}{\chapternumberline {3}Polimorfismo de Sobrecarga em Haskell}{11}

@@ -1,0 +1,143 @@
+\chapter{Introdu\c{c}\~ao}
+
+Linguagens de programa\c{c}\~ao modernas t\^em evolu\'ido no sentido de
+utilizar sistemas de tipos mais flex\'iveis, que permitem aos programadores
+escrever programas sem restri\c{c}\~oes, como se estivessem programando em
+linguagens n\~ao tipadas ou com tipagem din\^amica, mas garantindo que erros de
+tipo n\~ao ocorram durante a execu\c{c}\~ao do programa. O uso de
+sistemas de infer\^encia de tipos, em vez de sistemas de verifica\c{c}\~ao de
+tipos, \'e um exemplo de uma caracter\'istica importante nessa dire\c{c}\~ao,
+que, contudo, ainda introduz restri\c{c}\~oes nas linguagens devido ao desejo
+ou necessidade de manter o processo de infer\^encia de tipos decid\'ivel e eficiente.
+ 
+A maioria das linguagens atuais possui sistemas de tipos com suporte a
+defini\c{c}\~oes polim\'orficas que permitem a defini\c{c}\~ao de
+fun\c{c}\~oes que operam sobre va\-lo\-res de diferentes tipos.
+D\'a-se o nome de \emph{polimorfismo universal}, \emph{polimorfismo
+param\'etrico}, \emph{polimorfismo via-let}\footnote{Em
+ingl\^es: \emph{let-polymorphism}} ou \emph{polimorfismo de Damas-Milner}
+\cite{Mitchell96} ao mecanismo que permite a defini\c{c}\~ao de fun\c{c}\~oes que 
+comportam-se de maneira id\^entica sobre todos os valores de tipos que s\~ao inst\^ancias de um determinado
+tipo principal \cite{Mitchell96}.
+Diversas fun\c{c}\~oes presentes em bibliotecas para manipula\c{c}\~ao de
+estruturas de dados s\~ao exemplos de fun\c{c}\~oes que possuem este tipo de polimorfismo: contar o n\'umero de 
+elementos de uma determinada estrutura de dados, selecionar (filtrar) um subconjunto de elementos de uma estrutura de
+dados, aplicar uma fun\c{c}\~ao a cada um dos elementos de
+uma determinada estrutura de dados, s\~ao alguns dos muitos exemplos de fun\c{c}\~oes que utilizam polimorfismo 
+param\'etrico.
+
+O tipo principal de express\~oes 
+(e portanto de defini\c{c}\~oes de fun\c{c}\~oes) \'e em geral inferido automaticamente pelo compilador (ou
+interpretador) da linguagem, de acordo com tipos de constantes e fun\c{c}\~oes
+predefinidas. 
+
+Por\'em, muitas vezes, deseja-se definir 
+fun\c{c}\~oes que n\~ao operam da mesma maneira sobre valores de qualquer tipo
+que \'e inst\^ancia de um tipo principal, mas sim fun\c{c}\~oes que possuem
+comportamento diferente de acordo com o tipo do valor para o qual estas s\~ao aplicadas. 
+D\'a-se o nome de \emph{polimorfismo ad-hoc} ou
+\emph{polimorfismo de sobrecarga} ao mecanismo presente em linguagens que
+permitem defini\c{c}\~oes de fun\c{c}\~oes que comportam-se desta maneira.
+Exemplos destas fun\c{c}\~oes incluem: teste de igualdade, compara\c{c}\~ao
+referente a ordem de valores (menor-que, maior-que), \emph{parsers}, \emph{pretty-printers}, etc.
+
+Linguagens de programa\c{c}\~ao como \emph{Java} e \emph{C++} permitem
+defini\c{c}\~oes que utilizam \emph{polimorfismo param\'etrico} e uma
+forma restrita de \emph{sobrecarga} denominada \emph{sobrecarga independente de contexto} \cite{Watt90}, 
+onde a resolu\c{c}\~ao
+de qual fun\c{c}\~ao sobrecarregada ser\'a utilizada \'e feita com base apenas nos tipos dos argumentos
+ fornecidos em uma chamada de fun\c{c}\~ao. 
+Uma pol\'itica de sobrecarga independente de contexto simplifica a resolu\c{c}\~ao de sobrecarga e a detec\c{c}\~ao de
+ambiguidades, mas \'e restritiva. Por exemplo, constantes n\~ao podem ser sobrecarregadas e n\~ao \'e permitida a 
+sobrecarga de fun\c{c}\~oes onde apenas o tipo do valor retornado \'e diferente para as v\'arias defini\c{c}\~oes.
+Isso ocorre, por exemplo, no caso de uma fun\c{c}\~ao de leitura ou convers\~ao de valores para \emph{strings}, como
+a fun\c{c}\~ao \emph{read} definida na biblioteca padr\~ao de Haskell \cite{Haskell98}. Esta fun\c{c}\~ao \'e
+sobrecarregada em Haskell para diversos tipos b\'asicos da biblioteca padr\~ao (\emph{Int}, \emph{Float}, \emph{Bool},
+entre outros). Cada uma destas defini\c{c}\~oes tem um tipo que \'e uma inst\^ancia do tipo polim\'orfico 
+$\forall\alpha.String\rightarrow\alpha$. Um sistema de tipos que adote uma pol\'itica dependente do contexto permite a 
+resolu\c{c}\~ao de sobrecarga em declara\c{c}\~oes como: $\lambda x.\,read\,\,x ==``abc"$. Neste exemplo, o tipo de 
+\emph{read} \'e determinado como sendo $String\rightarrow String$. 
+
+A linguagem \emph{Haskell} permite combinar o \emph{polimorfismo param\'etrico} com o suporte \`a sobrecarga.
+S\'imbolos sobrecarregados podem ser definidos mediante a declara\c{c}\~ao de \emph{Classes de Tipos} \cite{Wadler89}.
+Cada declara\c{c}\~ao de classe define o nome da classe, um ou mais par\^ametros 
+(definidos como vari\'aveis de tipos) e nomes ou s\'imbolos,
+junto com seus respectivos tipos principais, sendo que as vari\'aveis de tipos usadas nesses tipos principais devem ser 
+inst\^ancias de cada um dos par\^ametros da classe. Implementa\c{c}\~oes de s\'imbolos sobrecarregados 
+s\~ao feitas em declara\c{c}\~oes de inst\^ancias. Uma declara\c{c}\~ao de inst\^ancia s\~ao definidas as fun\c{c}\~oes
+para os nomes especificados em uma classe, com tipos que devem ser inst\^ancias do tipo
+principal especificado na classe.
+
+Na atual defini\c{c}\~ao da linguagem \cite{Haskell98},
+s\~ao permitidas classes com, no m\'aximo, um par\^ametro. Classes
+com mais de um par\^ametro n\~ao foram introduzidas na
+defini\c{c}\~ao da linguagem devido a dificuldades existentes no tratamento de tipos
+amb\'iguos \footnote{Uma express\~ao $e$ \'e considerada amb\'igua se seu tipo
+pode ser produzido por duas ou mais deriva\c{c}\~oes de tipos e estas atribuem
+diferentes denota\c{c}\~oes para $e$ \cite{Mitchell96}.} que podem surgir no uso de s\'imbolos sobrecarregados. 
+Os atuais compiladores / interpretadores de Haskell permitem a utiliza\c{c}\~ao de classes com m\'ultiplos par\^ametros 
+utilizando extens\~oes do sistema de tipos da linguagem. Uma destas extens\~oes
+utiliza as chamadas \emph{depend\^encias funcionais} \cite{Jones00}. Uma depend\^encia funcional
+permite ao programador especificar que um dos par\^ametros da classe deve ser
+unicamente determinado por um ou mais par\^ametros da
+classe. Apesar de \'uteis, em algumas situa\c{c}\~oes depend\^encias funcionais 
+n\~ao podem ser utilizadas, uma vez que pode n\~ao existir uma depend\^encia funcional entre os par\^ametros 
+de uma classe. 
+
+O dilema atual enfrentado pelos projetistas de Haskell \'e que classes com m\'ultiplos par\^ametros s\~ao muito \'uteis 
+e devem ser introduzidas na linguagem, mas as extens\~oes propostas para solucionar os
+problemas de ambiguidade devido a utiliza\c{c}\~ao destas n\~ao resolvem
+completamente o problema e adicionam uma complexidade extra ao sistema de tipos
+de Haskell.
+
+\section{Objetivos}
+
+O objetivo principal deste trabalho \'e a elabora\c{c}\~ao de um novo sistema e algoritmo de infer\^encia de tipos
+para Haskell que d\^e suporte a classes de tipos com m\'ultiplos par\^ametros sem a necessidade de extens\~oes como
+depend\^encias funcionais e que permita a defini\c{c}\~ao de s\'imbolos
+sobrecarregados sem a necessidade pr\'evia de declarar uma classe de tipos.
+Al\'em da defini\c{c}\~ao do sistema e do algoritmo de infer\^encia de tipos, o presente trabalho pretende:
+a implementa\c{c}\~ao de um \emph{front-end} de um compilador Haskell que
+implemente o algoritmo de infer\^encia proposto e a demonstra\c{c}\~ao de propriedades de corre\c{c}\~ao e tipagem
+principal do algoritmo em rela\c{c}\~ao ao sistema de tipos \cite{Mitchell96, Wells02, Trevor96}.
+
+\section{Contribui\c{c}\~oes}
+
+%Os resultados deste trabalho visam as seguintes contribui\c{c}\~oes principais:
+
+\begin{enumerate} 
+	\item Defini\c{c}\~ao e formaliza\c{c}\~ao de um novo algoritmo de infer\^encia e um novo sistema de tipos 
+	      para Haskell, que d\^e suporte a defini\c{c}\~ao e uso de classes
+	      de tipos com m\'ultiplos par\^ametros que seja correto, possua a propriedade de tipagem principal e que
+	      permita a defini\c{c}\~ao opcional de classes de tipos se o programador julgar adequado. 
+	\item Implementa\c{c}\~ao de um prot\'otipo de um \emph{front-end} para Haskell que implemente o algoritmo de 
+	      infer\^encia proposto e permita sua utiliza\c{c}\~ao para a verifica\c{c}\~ao e infer\^encia de tipos 
+	      de bibliotecas Haskell que
+	      at\'e o presente momento s\~ao desenvolvidas utilizando-se alguma extens\~ao para suporte a classes de
+	      tipos com m\'ultiplos par\^ametros implementada em compiladores como o GHC \cite{GHC}.	       
+\end{enumerate}
+
+\section{Metodologia}
+
+A defini\c{c}\~ao, formaliza\c{c}\~ao e implementa\c{c}\~ao do sistema de tipos proposto envolve as seguintes etapas:
+
+\begin{enumerate}
+	\item Defini\c{c}\~ao de um sistema e de um algoritmo de infer\^encia de tipos para permitir classes com m\'ultiplos
+	      par\^ametros em Haskell e implementa\c{c}\~ao de um prot\'otipo baseado nesse algoritmo.
+    \item Defini\c{c}\~ao de um sistema e de um algoritmo de infer\^encia de  tipos que permita a declara\c{c}\~ao
+          opcional de classes de tipos, considerando conhecido
+          o conjunto de todas as inst\^ancias dessa classe. Implementa\c{c}\~ao de um 
+          prot\'otipo que baseado neste algoritmo.
+    \item Demonstra\c{c}\~ao das propriedades de tipo e tipagem principal dos algoritmos em 
+          rela\c{c}\~ao aos sistemas de tipos propostos.
+    \item Prova de termina\c{c}\~ao dos algoritmos de infer\^encia de tipos definidos.
+\end{enumerate} 
+
+\section{Organiza\c{c}\~ao do Trabalho}
+
+Al\'em deste cap\'itulo introdut\'orio, este trabalho \'e dividido em tr\^es partes. A primeira delas compreende os 
+cap\'itulos \ref{capintrohaskell} e \ref{sobrecarga} que apresentam a linguagem Haskell e sua abordagem para polimorfismo
+de sobrecarga. A segunda parte compreende o cap\'itulo \ref{capmptc} que apresenta a defini\c{c}\~ao formal do sistema
+de tipos elaborado, suas propriedades e descreve a implementa\c{c}\~ao do \emph{front-end} que o utiliza. A terceira
+e \'ultima parte \'e formada pelo cap\'itulo \ref{plan} que apresenta o sum\'ario da tese e o cronograma
+das atividades que ainda ser\~ao desenvolvidas. 

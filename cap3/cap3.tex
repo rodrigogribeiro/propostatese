@@ -1,0 +1,80 @@
+\chapter{Polimorfismo de Sobrecarga em Haskell}\label{sobrecarga}
+
+Este cap\'itulo apresenta uma breve introdu\c{c}\~ao \`a abordagem adotada na 
+linguagem Haskell para sobrecarga. Leitores fa\-mi\-li\-a\-ri\-za\-dos com estes 
+conceitos podem continuar a leitura a partir do Cap\'itulo 4.
+
+\noindent\rule{15.5cm}{0.2mm}
+
+\section{Introdu\c{c}\~ao}
+
+Strachey, em 1964, foi o primeiro a utilizar o termo \emph{polimorfismo ad-hoc} 
+para se referir a fun\c{c}\~oes polim\'orficas que podem ser aplicadas a
+argumentos de diferentes tipos, mas que comportam-se de acordo com o tipo do
+argumento para as quais s\~ao aplicadas \cite{Strachey00}. Neste texto ser\'a usado,
+preferencialmente, o termo \emph{polimorfismo de sobrecarga} para denominar
+este tipo de fun\c{c}\~ao. Linguagens que prov\^eem suporte ao polimorfismo de
+sobrecarga permitem ao programador fazer v\'arias defini\c{c}\~oes, todas com o mesmo nome. A
+tarefa de determinar qual fun\c{c}\~ao \'e chamada pode ser realizada
+estaticamente pelo compilador, que toma esta decis\~ao com base em
+informa\c{c}\~oes do contexto onde o nome da fun\c{c}\~ao \'e usado, ou pode ser
+realizada dinamicamente, ou seja, durante a execu\c{c}\~ao do programa.
+
+Ao contr\'ario do \emph{polimorfismo param\'etrico}, a import\^ancia do
+polimorfismo de sobrecarga \'e muitas vezes subestimada, considerando que este
+n\~ao aumenta a expressividade de uma linguagem, pois poderia ser eliminado por
+uma renomea\c{c}\~ao adequada de s\'imbolos. Todavia, a import\^ancia do
+polimorfismo de sobrecarga n\~ao est\'a em evitar a polui\c{c}\~ao do espa\c{c}o
+de nomes, mas na propriedade de que express\~oes e nomes definidos utilizando
+s\'imbolos sobrecarregados podem ser usados em contextos que podem requerer
+valores de tipos distintos \cite{Camarao99a}.
+
+Linguagens que prov\^eem polimorfismo de sobrecarga utilizam uma
+\emph{pol\'itica de sobrecarga} (\emph{overloading policy}) que visa extender a possibilidade de
+sobrecarga de modo a permitir que um maior n\'umero de programas que utilizam
+s\'imbolos sobrecarregados sejam considerados corretos e, ao mesmo tempo,
+estabelece regras que limitam a sobrecarga, para permitir que o processo de
+infer\^encia de tipos seja eficiente. Uma estrat\'egia de sobrecarga pode ser
+caracterizada como \emph{dependente de contexto} ou \emph{independente de
+contexto} \cite{Watt90}. Em uma estrat\'egia de sobrecarga independente de
+contexto, se \emph{f} \'e um s\'imbolo sobrecarregado ent\~ao, para cada
+aplica\c{c}\~ao \emph{f e}, a decis\~ao sobre qual fun\c{c}\~ao \emph{f} ser\'a
+aplicada \'e determinada de acordo com o tipo da express\~ao \emph{e}. Por sua
+vez, uma estrat\'egia de sobrecarga dependente de contexto pode utilizar o
+contexto no qual a express\~ao \emph{f e} \'e usada para determinar qual defini\c{c}\~ao do
+s\'imbolo \emph{f} ser\'a usada.
+
+Estrat\'egias independentes de contexto para o polimorfismo de sobrecarga s\~ao
+utilizadas em diversas linguagens populares, como \texttt{C++} e \texttt{Java},
+para m\'etodos definidos em uma mesma classe (desconsiderando o fato de que o
+mecanismo de associa\c{c}\~ao din\^amica em 
+chamadas de m\'etodos $-$ no qual o m\'etodo a ser chamado \'e determinado de
+acordo com o tipo do objeto usado (como alvo) na chamada de m\'etodo $-$ pode
+ser visto como uma forma de resolu\c{c}\~ao de sobrecarga). Apesar da
+abordagem de sobrecarga independente de contexto permitir solu\c{c}\~oes simples 
+para a resolu\c{c}\~ao da sobrecarga,
+ela \'e muito res\-tri\-ti\-va. Por exemplo, s\'imbolos como \emph{read}, cujas
+defini\c{c}\~oes possuem tipos que s\~ao inst\^ancias de $\forall a .
+String\rightarrow a$, n\~ao podem ser sobrecarregados, uma vez que
+n\~ao \'e poss\'ivel determinar, utilizando apenas o tipo da express\~ao
+fornecida como argumento para \emph{read} para qual tipo dever\'a ser
+instanciada a vari\'avel \emph{a}. Uma estrat\'egia de sobrecarga dependente de
+contexto, por outro lado, permite tais defini\c{c}\~oes; por exemplo, o tipo de
+\emph{read} em $\lambda x .\,\, $\emph{read x == ``a string''}
+pode ser inferido como $String\rightarrow\,\, String$.
+
+Muitos sistemas de tipo que prov\^eem suporte a polimorfismo de sobrecarga t\^em adotado
+uma estrat\'egia dependente de contexto para sobrecarga, por esta ser menos
+restritiva. Nesta classe de sistemas de tipos est\~ao inclu\'idos o sistema
+\emph{CT} \cite{Camarao99a} e o sistema de classes tipos utilizado pela linguagem
+\emph{Haskell} \cite{Haskell98, Wadler89}. 
+
+Desde sua proposta original em \cite{Wadler89}, o sistema de classes de tipos sofreu mudan\c{c}as
+para a inclus\~ ao de diversas extens\~oes. Em sua maioria, estas extens\~oes tinham o intuito de permitir a 
+utiliza\c{c}\~ao de classes de tipos com m\'ultiplos par\^ametros\footnote{do ingl\^es: \emph{Multi-Parameter Type
+Classes}.}. Dentre estas podemos citar: Classes de Tipos Param\'etricas \cite{Chen92}, Depend\^encias Funcionais 
+\cite{Jones00, Jones09, Sulzmann06a} e Fam\'ilias de tipos\footnote{do ingl\^es: \emph{Type families}.} 
+\cite{Schrijvers2008, Chakravarty05}. 
+
+
+\input{cap3/cap3haskell}

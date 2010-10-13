@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: document.aux
+The style file: ppgccufmg.bst
+Database file #1: document.bib
+Warning--I didn't find a database entry for "JonesPrime10"
+Warning--empty journal in Damas82
+Warning--there's a number but no volume in Jones00
+Warning--there's a number but no volume in Milner79
+You've used 39 entries,
+            1964 wiz_defined-function locations,
+            744 strings with 10590 characters,
+and the built_in function-call counts, 16284 in all, are:
+= -- 1674
+> -- 529
+< -- 44
++ -- 180
+- -- 170
+* -- 1355
+:= -- 2666
+add.period$ -- 129
+call.type$ -- 39
+change.case$ -- 275
+chr.to.int$ -- 35
+cite$ -- 42
+duplicate$ -- 709
+empty$ -- 1188
+format.name$ -- 231
+if$ -- 3364
+int.to.chr$ -- 5
+int.to.str$ -- 0
+missing$ -- 39
+newline$ -- 196
+num.names$ -- 118
+pop$ -- 298
+preamble$ -- 1
+purify$ -- 280
+quote$ -- 0
+skip$ -- 564
+stack$ -- 0
+substring$ -- 1100
+swap$ -- 143
+text.length$ -- 19
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 224
+warning$ -- 3
+while$ -- 145
+width$ -- 0
+write$ -- 519
+(There were 4 warnings)

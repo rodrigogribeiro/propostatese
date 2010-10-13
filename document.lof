@@ -1,0 +1,42 @@
+\select@language {brazil}
+\addvspace {10pt}
+\addvspace {10pt}
+\addvspace {10pt}
+\addvspace {10pt}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Um M\'odulo em Haskell}}{6}{figure.2.1}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Defini\c {c}\~ao de um tipo de dados alg\'ebrico e uma fun\c {c}\~ao que o utiliza.}}{9}{figure.2.2}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Tipo de dados alg\'ebrico.}}{9}{figure.2.3}
+\addvspace {10pt}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Exemplo de classe de tipos e inst\^ancias}}{13}{figure.3.1}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Fun\c {c}\~ao polim\'orfica cujo tipo \'e restringido pela classe \texttt {Eq}.}}{14}{figure.3.2}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Exemplo de hierarquia de classes de tipos.}}{14}{figure.3.3}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Exemplo de tradu\c {c}\~ao de classes de tipo e inst\^ancias para dicion\'arios.}}{15}{figure.3.4}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Tradu\c {c}\~ao da fun\c {c}\~ao \texttt {member}, utilizando dicion\'arios.}}{16}{figure.3.5}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Trecho de C\'odigo que faz o algoritmo de infer\^encia de \cite {Duggan02a} n\~ao terminar}}{23}{figure.3.6}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces C\'odigo que causa n\~ao termina\c {c}\~ao da infer\^encia de tipos}}{26}{figure.3.7}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Exemplo de inst\^ancias que violam a restri\c {c}\~ao de consist\^encia}}{29}{figure.3.8}
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Exemplo de inst\^ancia que viola a condi\c {c}\~ao de cobertura}}{29}{figure.3.9}
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Trecho de c\'odigo contendo um tipo n\~ao amb\'iguo.}}{30}{figure.3.10}
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Defini\c {c}\~ao de mapeamentos finitos usando fam\'ilias de tipos.}}{33}{figure.3.11}
+\contentsline {figure}{\numberline {3.12}{\ignorespaces Uma inst\^ancia de Fam\'ilia Associada de Tipos.}}{33}{figure.3.12}
+\contentsline {figure}{\numberline {3.13}{\ignorespaces Definindo cole\c {c}\~oes gen\'ericas usando Fam\'ilias de Tipos.}}{34}{figure.3.13}
+\addvspace {10pt}
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Sintaxe Livre de Contexto da Linguagem \emph {Core-Haskell}.}}{42}{figure.4.1}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Sintaxe livre de contexto de tipos}}{42}{figure.4.2}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Casamento de Classes-Inst\^ancias}}{47}{figure.4.3}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Restri\c {c}\~ao de Inst\^ancia Bem Formada}}{48}{figure.4.4}
+\contentsline {figure}{\numberline {4.5}{\ignorespaces C\'odigo de Exemplo para a Defini\c {c}\~ao de Inst\^ancias Bem Formadas}}{48}{figure.4.5}
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Fragmento de Semi-Reticulado de Tipos Simples}}{50}{figure.4.6}
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Defini\c {c}\~ao da fun\c {c}\~ao lcg}}{53}{figure.4.7}
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Defini\c {c}\~ao dda fun\c {c}\~ao gen}}{53}{figure.4.8}
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Regra para Satisfazibilidade de uma Restri\c {c}\~ao}}{54}{figure.4.9}
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Regra para Satisfazibilidade de um Conjunto Vazio de Restri\c {c}\~oes}}{55}{figure.4.10}
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Satisfazibilidade de um Conjunto n\~ao Vazio de Restri\c {c}\~oes}}{55}{figure.4.11}
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Fechamento de um Conjunto de Restri\c {c}\~oes}}{56}{figure.4.12}
+\contentsline {figure}{\numberline {4.13}{\ignorespaces Defini\c {c}\~ao de Tipo Bem Formado.}}{56}{figure.4.13}
+\contentsline {figure}{\numberline {4.14}{\ignorespaces Regras do Sistema de Tipos}}{58}{figure.4.14}
+\contentsline {figure}{\numberline {4.15}{\ignorespaces Algoritmo para Infer\^encia de Tipagens Principais}}{60}{figure.4.15}
+\contentsline {figure}{\numberline {4.16}{\ignorespaces Fun\c {c}\~ao para determinar se um tipo \'e bem formado}}{61}{figure.4.16}
+\addvspace {10pt}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Sum\'ario da Tese}}{64}{figure.5.1}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Cronograma das Atividades}}{65}{figure.5.2}
